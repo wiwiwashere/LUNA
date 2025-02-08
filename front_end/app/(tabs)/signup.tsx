@@ -8,11 +8,10 @@ export default function SignUpScreen() {
 
   const handleSignup = async () => {
     try {
-      const response = await fetch("http://127.0.01:5000/register", {
+      const response = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Origin: 'http://127.0.0.1:5000'},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, healthConditions }),
-        mode: 'no-cors', // Added no-cors mode
       });
 
       const data = await response.json();

@@ -9,13 +9,16 @@ import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import React from 'react';
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
+// ROOT ROOT ROOT ROOT ROOT ROOT ROOT ROOT
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded, error] = useFonts({
     HennyPenny: require('../assets/fonts/HennyPenny-Regular.ttf'),
+    AbhayaLibre: require('../assets/fonts/AbhayaLibre-Regular.ttf'),
+    Aboreto: require('../assets/fonts/Aboreto-Regular.ttf'),
+    PinyonScript: require('../assets/fonts/PinyonScript-Regular.ttf'),
   });
 
   useEffect(() => {
