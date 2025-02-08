@@ -1,5 +1,8 @@
 {
   "dependencies": {
     "typescript": "^5.7.3"
+  },
+  "devDependencies": {
+    "expo-module-scripts": "^4.0.3"
   }
 }
