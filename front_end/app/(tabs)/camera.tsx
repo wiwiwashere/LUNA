@@ -1,8 +1,11 @@
 import PhotoPreviewSection from '@/components/PhotoPreviewSection';
 import { AntDesign } from '@expo/vector-icons';
 import { CameraType, CameraView, useCameraPermissions } from 'expo-camera';
+import React from 'react';
 import { useRef, useState } from 'react';
-import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import axios from 'axios';
+
 
 export default function Camera() {
   const [facing, setFacing] = useState<CameraType>('back');
@@ -38,9 +41,54 @@ export default function Camera() {
         };
         const takedPhoto = await cameraRef.current.takePictureAsync(options);
 
-        setPhoto(takedPhoto);
+        if (takedPhoto) {
+          setPhoto(takedPhoto);
+
+        const photoData = new FormData();
+            photoData.append("image", {
+                uri: takedPhoto.uri, 
+                type: "image/jpeg", 
+                name: "photo.jpg"} as unknown as Blob);
+
+                uploadPhoto(photoData);
+              } else {
+                Alert.alert("Error", "Failed to capture photo.");
+              }
+            }
+          };
+
+  async function uploadPhoto (photoData: FormData): Promise <void>{
+    try {
+      const response = await axios.post("https://api.imgur.com/3/", photoData, {
+    
+        headers: {
+          "Authorization": `Client-ID ${process.env.IMGUR_CLIENT_ID}`,
+          "Content-Type": "multipart/form-data"
+
+      }
+    });
+  
+      // Convert response headers to a usable format
+      const clientRemaining = response.headers["x-ratelimit-clientremaining"];
+      console.log("Client Remaining:", clientRemaining);
+  
+      const data = await response.data;
+  
+      if (data.success) {
+        await sendToFirebase(data.data.link);
+        Alert.alert("Success!", `Image uploaded to Imgur: ${data.data.link}`);
+      } else {
+        Alert.alert("Error", "Failed to upload image.");
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+      Alert.alert("Upload Error", "Something went wrong!");
     }
-  }; 
+  }
+
+  async function sendToFirebase(imageLink: string): Promise <void>{
+
+  }
 
   const handleRetakePhoto = () => setPhoto(null);
 
