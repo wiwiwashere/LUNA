@@ -7,7 +7,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } = require('firebase/auth');
 const { getFirestore, doc, setDoc, getDoc } = require('firebase/firestore');
 const { auth, db } = require('./services/firebase');
-import { http } from 'http'
+const http = require('http')
 
 dotenv.config();
 
@@ -15,7 +15,7 @@ const app = express();
 
 // Middleware
 app.use(express.json()); // Middleware to parse JSON bodies
-//app.use(cors());
+app.use(cors());
 const allowedOrigins = ['http://localhost:8081']; // <--- IMPORTANT: Add your React app's origin here!
 
 const corsOptions = {
@@ -28,7 +28,7 @@ const corsOptions = {
   }
 };
 
-app.use(cors(corsOptions));  // Use the CORS middleware with the options
+//app.use(cors(corsOptions));  // Use the CORS middleware with the options
 
 app.use(
   '/register',  // The prefix in your fetch calls
@@ -78,11 +78,11 @@ app.post('/register', async (req, res) => {
   }
 });
 
-const server = http.createServer()
+const server = http.createServer(app)
 
 // Start the server
 const PORT = process.env.PORT || 5000;
-app.listen(5000, () => {
+server.listen(5000, () => {
     console.log('Server is running on port 5000');
   });
   

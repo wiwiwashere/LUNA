@@ -8,6 +8,7 @@ front_end/node_modules/
 # .env files for environment variables (both backend and frontend)
 *.env
 **/.env
+back_end/.env
 
 # Firebase credentials (if needed, e.g., private keys or other sensitive files)
 luna-450303-9301cac1fcf1.json
@@ -20,4 +21,8 @@ npm-debug.log
 yarn-debug.log
 yarn-error.log
 
+<<<<<<< HEAD
 >>>>>>> 7447bc4084a6880a53c44b1b7f531b0ab4d6bee8
+=======
+node_modules
+>>>>>>> d9987a75a3bb39f6891b8e3fca0eb3a215590e78
