@@ -1,0 +1,19 @@
+# Node modules for both frontend and backend
+back_end/node_modules/
+front_end/node_modules/
+
+# .env files for environment variables (both backend and frontend)
+*.env
+**/.env
+
+# Firebase credentials (if needed, e.g., private keys or other sensitive files)
+luna-450303-9301cac1fcf1.json
+
+# Build files (if applicable)
+build/
+
+# Log files
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
