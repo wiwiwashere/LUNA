@@ -4,11 +4,10 @@ import React, { useState } from "react";
 export default function LogInScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [healthConditions, setHealthConditions] = useState("");
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Sign Up</Text>
+      <Text style={styles.title}>Log In</Text>
       <TextInput 
         style={styles.input} 
         placeholder="Email" 
@@ -24,13 +23,6 @@ export default function LogInScreen() {
         onChangeText={setPassword} 
         placeholderTextColor="#999" 
       />
-      <TextInput 
-        style={styles.input} 
-        placeholder="Health Conditions (comma-separated)" 
-        value={healthConditions} 
-        onChangeText={setHealthConditions} 
-        placeholderTextColor="#999" 
-      />
     </View>
   );
 }
@@ -41,11 +33,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
+    backgroundColor: "white",
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
+    color: "black",
   },
   input: {
     width: "100%",

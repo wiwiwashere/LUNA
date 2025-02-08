@@ -14,8 +14,15 @@ dotenv.config();
 const app = express();
 
 // Middleware
+app.use(cors({
+  origin: '*', // or specify allowed origins like 'http://localhost:3000/'
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true // if you're using cookies/sessions
+}));
+
 app.use(express.json()); // Middleware to parse JSON bodies
-app.use(cors());
+
 const allowedOrigins = ['http://localhost:8081']; // <--- IMPORTANT: Add your React app's origin here!
 
 const corsOptions = {
@@ -28,19 +35,9 @@ const corsOptions = {
   }
 };
 
-//app.use(cors(corsOptions));  // Use the CORS middleware with the options
-
-app.use(
-  '/register',  // The prefix in your fetch calls
-  createProxyMiddleware({
-    target: 'http://127.0.0.1:5000/', // Your backend URL
-    changeOrigin: true, // Essential for localhost
-  })
-);
-
 // API Routes
 app.use('/api', imageRoutes); 
-app.use('/api/auth', authRoutes);
+//app.use('/api/auth', authRoutes);
 
 app.get('/search', (req, res) => {
   const searchTerm = req.query.q; // Access query parameters with req.query
@@ -52,7 +49,7 @@ app.get('/search', (req, res) => {
   }
 });
 
-app.post('/register', async (req, res) => {
+app.post('/api/auth/register', async (req, res) => {
   const { email, password, healthConditions } = req.body;
   // const searchTerm = req.query.q; // Access query parameters with req.query
   console.log('REGISTER CALLED::::');
@@ -85,5 +82,7 @@ const PORT = process.env.PORT || 5000;
 server.listen(5000, () => {
     console.log('Server is running on port 5000');
   });
+
+
   
   

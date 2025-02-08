@@ -35,12 +35,12 @@ export default function ProfileScreen() {
         <ButtonComponent 
           title="LOGOUT"
           onPress={handleLogut}
-          style={{padding: 10, 
+          style={{padding: 7, 
                   width: 100, 
                   marginBottom: 0,
-                  marginTop: 40,
+                  marginTop: 60,
                   bottom: 50, // distance from the bottom
-                  left: 150
+                  left: 140
                 }} // Custom button styles
           textStyle={{ fontSize: 13}} // Custom text styles
         />
@@ -66,8 +66,8 @@ const styles = StyleSheet.create({
   titleContainer: {
     alignItems: 'center',
     flex: 1,
-    backgroundColor: 'transparent',
-    marginTop: 50,
+    backgroundColor: 'transparents',
+    marginTop: 0,
   },
   stepContainer: {
     alignItems: 'center',
