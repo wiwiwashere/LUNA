@@ -29,10 +29,11 @@
 ## Technical Stack
 
 - **Frontend:**  
-  - Built with **React Native** for ios mobile development.
+  - **React Native** for ios mobile development.
+  - **Figma** for UX/UI design.
   
 - **Backend:**  
-  - **Node.js** with **Express.js** for handling API requests and integrating external services.
+  - **Node.js** for handling API requests and integrating external services.
   - **Firebase Authentication** for secure user management.
   - **Firebase Firestore** for storing user preferences, scan histories, and other application data.
 
