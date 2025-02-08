@@ -5,6 +5,7 @@ front_end/node_modules/
 # .env files for environment variables (both backend and frontend)
 *.env
 **/.env
+back_end/.env
 
 # Firebase credentials (if needed, e.g., private keys or other sensitive files)
 luna-450303-9301cac1fcf1.json
