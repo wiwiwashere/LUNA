@@ -46,6 +46,12 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="explore"
+        options={{
+          href: null, // Hides it from the tab bar
+        }}
+      />
+      <Tabs.Screen
         name="signup"
         options={{
           title: 'Sign Up',
