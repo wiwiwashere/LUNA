@@ -1,8 +1,8 @@
 # WiNGHacks 2025
 
-# name
+# LUNA
 
-**name** is an innovative mobile application designed to help users better understand the ingredients in their food products. With a focus on women's health—addressing needs during pregnancy, PCOS, menopause, hormonal health, breastfeeding, and more—the app also supports various dietary restrictions (halal, kosher, keto, vegan) and allergy concerns.
+**LUNA** is an innovative mobile application designed to help users better understand the ingredients in their food products. With a focus on women's health—addressing needs during pregnancy, PCOS, menopause, hormonal health, breastfeeding, and more—the app also supports various dietary restrictions (halal, kosher, keto, vegan) and allergy concerns.
 
 ## Features
 
