@@ -1,17 +1,22 @@
-//store user data and preferences
-const { firebase, admin } = require('../services/firebase');
 const express = require('express');
+const app = express();
+const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } = require('firebase/auth');
+const { getFirestore, doc, setDoc, getDoc } = require('firebase/firestore');
+const { auth, db } = require('../services/firebase');
 const router = express.Router();
 
-router.post('/register', async (req, res) => {
-  const { email, password, healthConditions } = req.body; // Expecting healthConditions in the request body
+app.post('/register', async (req, res) => {
+  const { email, password, healthConditions } = req.body;
+  console.log('Email', email);
+  console.log('HITTING REGISTER:::::::');
+  
   try {
     // Register user with Firebase Auth
-    const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // Store user data (including health conditions) in Firestore
-    await admin.firestore().collection('users').doc(user.uid).set({
+    // Store user data in Firestore
+    await setDoc(doc(db, 'users', user.uid), {
       email: user.email,
       healthConditions: healthConditions || [],
       preferences: {
@@ -22,29 +27,41 @@ router.post('/register', async (req, res) => {
 
     res.status(201).json(user);
   } catch (error) {
+    console.error('Registration error:', error);
     res.status(400).json({ error: error.message });
   }
 });
 
-// Login User
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
+  
   try {
-    const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+    // Sign in user
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // Retrieve user preferences (including health conditions) from Firestore
-    const userDoc = await admin.firestore().collection('users').doc(user.uid).get();
+    // Get user data from Firestore
+    const userDocRef = doc(db, 'users', user.uid);
+    const userDoc = await getDoc(userDocRef);
+    
+    if (!userDoc.exists()) {
+      throw new Error('User data not found');
+    }
+
     const userData = userDoc.data();
 
-    // Send the user info along with preferences and health conditions
     res.status(200).json({
-      user,
+      message: "Login successful",
+      user: {
+        uid: user.uid,
+        email: user.email,
+      },
       preferences: userData.preferences,
       healthConditions: userData.healthConditions,
     });
   } catch (error) {
-    res.status(401).json({ error: 'Invalid username or password' });
+    console.error('Login error:', error);
+    res.status(401).json({ error: "Invalid email or password" });
   }
 });
 

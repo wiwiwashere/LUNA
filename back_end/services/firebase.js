@@ -1,8 +1,8 @@
-const firebase = require('firebase');
 const admin = require('firebase-admin');
 const dotenv = require('dotenv');
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+const { initializeApp } = require('firebase/app');
+const { getFirestore, collection, addDoc, getDocs } = require('firebase/firestore');
+const { getAuth } = require('firebase/auth');
 
 dotenv.config();
 
@@ -23,9 +23,9 @@ const firebaseConfig = {
   measurementId: process.env.FIREBASE_MEASUREMENT_ID,
 };
 
-firebase.initializeApp(firebaseConfig);
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+const db = getFirestore(app);
+const auth = getAuth(app);
 
 // Firebase token verification function
 const verifyToken = async (token) => {
@@ -37,4 +37,24 @@ const verifyToken = async (token) => {
   }
 };
 
-module.exports = { firebase, admin, verifyToken };
+//store image link
+async function imageStore (imageLink) {
+  try{
+    //const db = getFirestore();
+    const userRef = admin.firestore().collection('users').doc(userId);
+    const imageRef = userRef.collection('images');
+    await imageRef.add({
+      imageLink, 
+    })
+    // await addDoc(collection(db, `users/${userUID}/images`), {
+    //   imageLink, 
+    //   timestamp: new Date(),
+    // });
+    console.log("image url saved");
+  }
+  catch (error){
+    console.error ("error saving image", error);
+  }
+}
+
+module.exports = { app, db, auth, verifyToken, imageStore };
