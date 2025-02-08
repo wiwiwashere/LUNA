@@ -48,7 +48,7 @@ export default function HomeScreen() {
         <ThemedText type="title">LUNA</ThemedText> // title
 
         {/* welcome user and greet them by name */}
-        <ThemedText type="welcome">Welcome, Kayla</ThemedText>
+        <ThemedText type="welcome">welcome, kayla</ThemedText>
 
         {/* container for subtitle / instructions */}
         <ThemedView style={[styles.stepContainer, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
