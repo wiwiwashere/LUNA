@@ -18,14 +18,40 @@ export default function HomeScreen() {
 
       // title box
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">LUNA</ThemedText> // text
+        <ThemedText type="title">LUNA</ThemedText> // title
 
+        // container for subtitle / instructions
         <ThemedView style={styles.stepContainer}>
+          <ThemedText type="subtitle">Step 1: Try it</ThemedText>
         </ThemedView>
 
       </ThemedView>
 
     </ThemedView>
+  );
+}
+
+const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  titleContainer: {
+    zIndex: 1,
+    backgroundColor: 'transparent',
+  },
+  stepContainer: {
+    marginTop: 20,
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+  },
+  content: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+});
 
     // starter code fomr expo
     //   <ThemedView style={styles.stepContainer}>
@@ -59,36 +85,3 @@ export default function HomeScreen() {
     //       <ThemedText type="defaultSemiBold">app-example</ThemedText>.
     //     </ThemedText>
     //   </ThemedView>
-  );
-}
-
-const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  content: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  titleContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    gap: 8,
-    backgroundColor: 'transparent',
-    marginTop: 50,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
