@@ -1,33 +1,76 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import { Image, StyleSheet, Platform, Alert, TouchableOpacity } from 'react-native';
+import React, {useState} from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { SafeAreaView, ImageBackground } from 'react-native';
+import ButtonComponent from '@/components/Button';
+import Camera from './camera';
+import { Link, Tabs, useRouter } from 'expo-router';
+import { IconSymbol } from '@/components/ui/IconSymbol';
+import { useNavigation } from '@react-navigation/native';
 
 export default function HomeScreen() {
+  const navigation = useNavigation();
+  // camera state
+  const [isCameraVisible, setIsCameraVisible] = useState(false);
+  const router = useRouter();
+
+  // insets
   const insets = useSafeAreaInsets();
+
+  // action for camera press
+  const handleCameraPress = () => {
+    // navigation.navigate('./(tabs)/camera');
+    // setIsCameraVisible(prevState => !prevState); 
+    router.push('/(tabs)/camera'); 
+  };
+
+  // action for upload button
+  const handleUploadPress = () => {
+    Alert.alert('upload pressed!'); 
+  };
+
   return (
     // whole screen
-    <ThemedView style={styles.background}>
-      // image for full background
+    <SafeAreaView style={styles.background}>
+      {/* image for full background */}
+      <ImageBackground/>
       <Image
         source={require('@/assets/images/background.png')} // background image
         style={StyleSheet.absoluteFillObject} // fill the entire screen
       />
 
-      // title box
+     {/* title box */}
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">LUNA</ThemedText> // title
 
-        // container for subtitle / instructions
-        <ThemedView style={styles.stepContainer}>
-          <ThemedText type="subtitle">Step 1: Try it</ThemedText>
+        {/* welcome user and greet them by name */}
+        <ThemedText type="welcome">Welcome, Kayla</ThemedText>
+
+        {/* container for subtitle / instructions */}
+        <ThemedView style={[styles.stepContainer, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+          {/* mini thing to tell users what to do */}
+          <ThemedText type="subtitle">get started by scanning or uploading a food label</ThemedText>
+
+          {/* scan Button */}
+          {/* <ButtonComponent onPress={handleCameraPress} title="SCAN" /> */}
+
+          <ButtonComponent title="SCAN" onPress={handleCameraPress}/>
+        
+          {/* upload button */}
+          <ButtonComponent onPress={handleUploadPress} title="UPLOAD" />
+          
         </ThemedView>
 
       </ThemedView>
 
-    </ThemedView>
+      {/* Conditionally render Camera component */}
+      {isCameraVisible && <Camera />}
+
+    </SafeAreaView>
   );
 }
 
@@ -38,13 +81,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   titleContainer: {
-    zIndex: 1,
+    alignItems: 'center',
+    flex: 1,
     backgroundColor: 'transparent',
+    marginTop: 50,
   },
   stepContainer: {
-    marginTop: 20,
     alignItems: 'center',
     backgroundColor: 'transparent',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    marginTop: 0,
   },
   content: {
     justifyContent: 'center',
