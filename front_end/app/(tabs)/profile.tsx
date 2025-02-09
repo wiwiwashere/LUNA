@@ -23,6 +23,18 @@ export default function ProfileScreen() {
     router.push('/(tabs)/login'); 
   };
 
+  const [username, setUsername] = useState("Loading...");
+
+  // useEffect(() => {
+  //   const getUserData = async () => {
+  //     const storedUser = await AsyncStorage.getItem("user");
+  //     if (storedUser) {
+  //       setUsername(JSON.parse(storedUser).name);
+  //     }
+  //   };
+  //   getUserData();
+  // }, []);
+
   return (
     // whole screen
     <ImageBackground
