@@ -33,6 +33,13 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="splash"
+        options={{
+          title: 'Splash',
+          href: null
+        }}
+      />
+      <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',
