@@ -25,6 +25,21 @@ export default function TabLayout() {
   //   return () => unsubscribe();
   // }, []);
 
+  // const handleProfileAccess = () => {
+  //   if (!isAuthenticated) {
+  //     Alert.alert(
+  //       "Login Required",
+  //       "You must log in to access your profile.",
+  //       [
+  //         { text: "Cancel", style: "cancel" },
+  //         { text: "Log In", onPress: () => router.push('/(tabs)/login') }
+  //       ]
+  //     );
+  //     return false;
+  //   }
+  //   return true;
+  // };
+
   return (
     <Tabs
       screenOptions={{

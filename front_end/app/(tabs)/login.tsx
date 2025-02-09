@@ -1,9 +1,25 @@
 import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from "react-native";
 import React, { useState } from "react";
+import { useRouter } from "expo-router";
 
 export default function LogInScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
+
+  // const handleLogin = async () => {
+  //   try {
+  //     // Simulating login process (Replace with Firebase login)
+  //     if (email === "test@example.com" && password === "password123") {
+  //       Alert.alert("Success", "Logged in successfully!");
+  //       router.push("/(tabs)/profile"); // Redirect to Profile
+  //     } else {
+  //       Alert.alert("Error", "Invalid credentials.");
+  //     }
+  //   } catch (error) {
+  //     Alert.alert("Error", "Failed to log in.");
+  //   }
+  // };
 
   return (
     <View style={styles.container}>
@@ -61,5 +77,11 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#fff",
     fontWeight: "bold",
+  },
+  linkText: {
+    marginTop: 15,
+    fontSize: 16,
+    color: "#007BFF",
+    textDecorationLine: "underline",
   },
 });
