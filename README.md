@@ -47,3 +47,9 @@
    ```bash
    git clone https://github.com/wiwiwashere/pending.git
    cd pending
+2. **Install Dependencies**
+   ```bash
+   npm install
+3. **Run the App**
+   ```bash
+   npm expo start
