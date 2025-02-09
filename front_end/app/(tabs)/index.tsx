@@ -1,18 +1,14 @@
-<<<<<<< HEAD
-import { View, Text, ImageBackground, Image, StyleSheet, Platform, Alert, TouchableOpacity, SafeAreaView } from 'react-native';
+import { ImageBackground, SafeAreaView, StyleSheet, Alert } from 'react-native';
 import React, {useState, useEffect, useCallback} from 'react';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ButtonComponent from '@/components/Button';
-import Camera from './camera';
-import { Link, Tabs, useRouter } from 'expo-router';
-import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useNavigation } from '@react-navigation/native';
-import { getAuth } from "firebase/auth";
 import * as SplashScreen from 'expo-splash-screen'
+
+import { useRouter } from 'expo-router';
+import * as ImagePicker from 'expo-image-picker';
+import axios from 'axios';
 
 //import { db } from '../../../back_end/services/firebase.js';
 //import { collection, getDocs } from 'firebase/firestore';
@@ -21,41 +17,14 @@ SplashScreen.preventAutoHideAsync();
 
 
 export default function HomeScreen() {
-
+  const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(false);
   const navigation = useNavigation();
   // camera state
   const [isCameraVisible, setIsCameraVisible] = useState(false);
   const router = useRouter();
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-
-  // action for camera press
-  const handleCameraPress = () => {
-    // navigation.navigate('./(tabs)/camera');
-    // setIsCameraVisible(prevState => !prevState); 
-    router.push('/(tabs)/camera'); 
-  };
-
-  // action for upload button
-  const handleUploadPress = () => {
-    Alert.alert('upload pressed!'); 
-  };
-
-  // const { user } = useAuth();
-=======
-import { ImageBackground, SafeAreaView, StyleSheet, Alert } from 'react-native';
-import React, { useState } from 'react';
-import { useRouter } from 'expo-router';
-import * as ImagePicker from 'expo-image-picker';
-import ButtonComponent from '@/components/Button';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import axios from 'axios';
-
-export default function HomeScreen() {
-  const router = useRouter();
-  const [loading, setLoading] = useState<boolean>(false);
->>>>>>> 6bc2f2f81b376e85c00a355839975eeed3dd9d90
 
   // Handle image upload
   const handleUploadPress = async () => {
