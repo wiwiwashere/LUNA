@@ -16,10 +16,6 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
-<<<<<<< HEAD
-    "@google-cloud/vision": "^4.3.2",
-=======
->>>>>>> 5c3fb0c9a769b14869e542b165fa36002495cec2
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
     "axios": "^1.7.9",
