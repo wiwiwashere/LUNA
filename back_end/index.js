@@ -39,11 +39,6 @@ const corsOptions = {
     }
   }
 };
-// possibly delete later
-// Add this route at the beginning of your route definitions
-// app.get('/api/auth/register', (req, res) => {
-  
-// });
 
 // API Routes
 app.use('/api', imageRoutes); 
@@ -83,6 +78,39 @@ app.post('/api/auth/register', async (req, res) => {
   } catch (error) {
     console.error('Registration error:', error);
     res.status(400).json({ error: error.message });
+  }
+});
+
+app.post('/api/auth/login', async (req, res) => {
+  const { email, password } = req.body;
+  
+  try {
+    // Sign in user
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    // Get user data from Firestore
+    const userDocRef = doc(db, 'users', user.uid);
+    const userDoc = await getDoc(userDocRef);
+    
+    if (!userDoc.exists()) {
+      throw new Error('User data not found');
+    }
+
+    const userData = userDoc.data();
+
+    res.status(200).json({
+      message: "Login successful",
+      user: {
+        uid: user.uid,
+        email: user.email,
+      },
+      preferences: userData.preferences,
+      healthConditions: userData.healthConditions,
+    });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(401).json({ error: "Invalid email or password" });
   }
 });
 
