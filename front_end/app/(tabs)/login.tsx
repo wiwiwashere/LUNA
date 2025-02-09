@@ -54,7 +54,7 @@ export default function LogInScreen() {
     >
       <SafeAreaView style={styles.background}>
         <ThemedView style={styles.container}>
-          <ThemedText style={styles.title} type="title">Log In</ThemedText>
+        <ThemedText style={[styles.title, { color: "#003366" }]} type="title">Log In</ThemedText>
 
           <TextInput
             style={styles.input}

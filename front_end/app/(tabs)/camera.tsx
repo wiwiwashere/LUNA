@@ -103,23 +103,6 @@ export default function Camera() {
     }
   }
 
-  
-
-  async function sendToFirebase(imageLink: string): Promise <void>{
-    try {
-      const backendUrl = "https://us-central1-luna-d4ef6.cloudfunctions.net/storeImageLink";
-  
-      const response = await axios.post(backendUrl, {
-        imageLink,
-      });
-  
-      console.log("Firebase response:", response.data);
-    } catch (error) {
-      console.error("Error sending image link to Firebase:", error);
-      Alert.alert("Error", "Failed to save image link to Firebase.");
-    }
-  }
-
   async function detectTextFromImage(imageLink: string): Promise<void> {
     try {
       console.log("Google Vision API Key: AIzaSyDFXACzuiodXtuRhmQg_Ioc0-w-CaPwENI");
@@ -129,7 +112,7 @@ export default function Camera() {
           {
             image: {
               source: {
-                imageUri: imageLink, // Ensure this is a valid image URL
+                imageUri: imageLink, 
               },
             },
             features: [
