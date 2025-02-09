@@ -5,7 +5,7 @@ const BackgroundWithFixedRatio: React.FC = () => {
   return (
     <View style={styles.container}>
       <ImageBackground
-        source={{'@/assets/images/background.png' }} // Replace with your image URL
+        source={require('@/assets/images/background.jpg')} // Replace with the correct path to your image
         style={styles.background}
         resizeMode="contain"  // or "contain" depending on your needs
       >
