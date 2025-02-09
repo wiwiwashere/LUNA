@@ -70,6 +70,7 @@ app.post('/api/auth/register', async (req, res) => {
 
     // Store user data in Firestore
     await setDoc(doc(db, 'users', user.uid), {
+      username: user.username,
       email: user.email,
       healthConditions: healthConditions || [],
       preferences: {
@@ -97,6 +98,40 @@ server.listen(5000, () => {
     console.log('Server is running on port 5000');
   });
 
+  const vision = require('@google-cloud/vision');
 
+  // Creates a client
+  const client = new vision.ImageAnnotatorClient({
+    keyFilename: "luna-450303-9301cac1fcf1.json", // Provide the path to your Google Cloud service account JSON file
+  });
+  
+  async function detectTextFromImage(imgurLink) {
+    try {
+      // The Google Vision API expects the image content to be base64-encoded, but you can also use image URLs directly.
+      const [result] = await client.textDetection(imgurLink);
+  
+      // Get the full text response from the API
+      const fullTextAnnotation = result.fullTextAnnotation;
+  
+      if (fullTextAnnotation) {
+        console.log(`Text found in the image: ${fullTextAnnotation.text}`);
+        return fullTextAnnotation.text; // Return the detected text
+      } else {
+        console.log('No imag yet!');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error detecting text in image:', error);
+      return null;
+    }
+  }
+  
+  // Call this function with your Imgur URL
+  detectTextFromImage('https://i.imgur.com/your-image-link.jpg').then((text) => {
+    if (text) {
+      console.log(`Detected text: ${text}`);
+    }
+  });
+  
   
   

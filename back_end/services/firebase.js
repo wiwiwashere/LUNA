@@ -42,6 +42,15 @@ const verifyToken = async (token) => {
 
 const app2 = express();
 
+// const cors = require("cors")({ origin: true });
+
+// exports.storeImageLink = functions.https.onRequest(async (req, res) => {
+//   cors(req, res, async () => {
+//     // Your function logic here
+    
+//   });
+// });
+
 
 // exports.storeImageLink = functions.https.onRequest(async (req, res) => {
 //   if (req.method !== "POST") {

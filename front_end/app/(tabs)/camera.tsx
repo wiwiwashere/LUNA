@@ -5,6 +5,7 @@ import React from 'react';
 import { useRef, useState } from 'react';
 import { Alert, Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import axios from 'axios';
+import { AxiosError } from 'axios';
 
 interface ButtonProps {
   onPress: () => void;
@@ -29,6 +30,8 @@ export default function Camera() {
     // Camera permissions are still loading.
     return <View />;
   }
+  // delete this later
+  console.log("API Key:", process.env.GOOGLE_VISION_API_KEY);
 
   if (!permission.granted) {
     // Camera permissions are not granted yet.
@@ -87,8 +90,8 @@ export default function Camera() {
       const data = await response.data;
   
       if (data.success) {
-        //await sendToFirebase(data.data.link);
-        await sendToFirebase(data.data.link);
+        await detectTextFromImage(data.data.link);
+        // await sendToFirebase(data.data.link);
         Alert.alert("Success!", `Image uploaded to Imgur: ${data.data.link}`);
         console.log(`${data.data.link}`);
       } else {
@@ -99,6 +102,8 @@ export default function Camera() {
       Alert.alert("Upload Error", "Something went wrong!");
     }
   }
+
+  
 
   async function sendToFirebase(imageLink: string): Promise <void>{
     try {
@@ -114,6 +119,60 @@ export default function Camera() {
       Alert.alert("Error", "Failed to save image link to Firebase.");
     }
   }
+
+  async function detectTextFromImage(imageLink: string): Promise<void> {
+    try {
+      console.log("Google Vision API Key: AIzaSyDFXACzuiodXtuRhmQg_Ioc0-w-CaPwENI");
+      const visionApiUrl = "https://vision.googleapis.com/v1/images:annotate?key=AIzaSyDFXACzuiodXtuRhmQg_Ioc0-w-CaPwENI";
+      const requestBody = {
+        requests: [
+          {
+            image: {
+              source: {
+                imageUri: imageLink, // Ensure this is a valid image URL
+              },
+            },
+            features: [
+              {
+                type: "TEXT_DETECTION",
+                maxResults: 1,
+              },
+            ],
+          },
+        ],
+      };
+  
+      // Make the request to Google Vision API
+      const response = await axios.post(visionApiUrl, requestBody);
+      console.log('Google Vision API Response:', response.data); // Log full response
+  
+      const textAnnotations = response.data.responses[0].textAnnotations;
+  
+      if (textAnnotations && textAnnotations.length > 0) {
+        const detectedText = textAnnotations[0].description;
+        Alert.alert("Text Detected", detectedText);
+        console.log("Detected Text: ", detectedText); // Log the detected text
+      } else {
+        Alert.alert("No Text Detected", "No text found in the image.");
+      }
+    } catch (error) {
+      console.error("Error in text detection:", error);
+  
+      if (error instanceof AxiosError) {
+        // Log the full error response if available
+        if (error.response) {
+          console.error("Error response:", error.response.data);
+        } else {
+          console.error("No response from server:", error.message);
+        }
+      } else {
+        console.error("An unexpected error occurred:", error);
+      }
+  
+      Alert.alert("Text Detection Error", "Failed to detect text from the image.");
+    }
+  }
+  
 
   const handleRetakePhoto = () => setPhoto(null);
 

@@ -30,7 +30,7 @@ export default function SignUpScreen() {
         }
        });
        console.log(responseString);
-      const response = await fetch("http://localhost:5000/api/auth/register", {
+      const response = await fetch("http://10.136.1.40:5000/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: responseString,
