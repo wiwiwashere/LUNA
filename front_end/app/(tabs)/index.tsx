@@ -11,6 +11,7 @@ import { Link, Tabs, useRouter } from 'expo-router';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useNavigation } from '@react-navigation/native';
 import { getAuth } from "firebase/auth";
+
 //import { db } from '../../../back_end/services/firebase.js';
 //import { collection, getDocs } from 'firebase/firestore';
 

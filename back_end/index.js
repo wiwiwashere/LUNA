@@ -70,7 +70,7 @@ app.post('/api/auth/register', async (req, res) => {
 
     // Store user data in Firestore
     await setDoc(doc(db, 'users', user.uid), {
-      username: user.username,
+      username: user.username,//check if it works now
       email: user.email,
       healthConditions: healthConditions || [],
       preferences: {
