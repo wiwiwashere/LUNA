@@ -5,8 +5,6 @@ import React from 'react';
 import { useRef, useState } from 'react';
 import { Alert, Button, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
 import { useRouter } from "expo-router"
-import { OPENAI_API_KEY } from '@/config';
-import { IMGUR_CLIENT_ID } from '@/config';
 import axios from 'axios';
 
 interface ButtonProps {
