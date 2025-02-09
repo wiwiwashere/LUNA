@@ -1,6 +1,6 @@
 import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from "react-native";
 import React, { useState } from "react";
-// import { useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 // import { createUserWithEmailAndPassword } from 'firebase/auth';
 // import { collection, doc, setDoc } from 'firebase/firestore';
 // import { auth, db } from '@/firebaseConfig';
@@ -10,7 +10,7 @@ export default function SignUpScreen() {
   const [username, setName] = useState("");
   const [password, setPassword] = useState("");
   const [healthConditions, setHealthConditions] = useState("");
-  // const router = useRouter();
+  const router = useRouter();
 
   const handleSignup = async () => {
 
