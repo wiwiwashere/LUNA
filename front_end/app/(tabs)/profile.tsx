@@ -48,7 +48,7 @@ export default function ProfileScreen() {
       {/* title box */}
         <ThemedView style={styles.titleContainer}>
           {/* user name */}
-          <ThemedText type="title">Kayla Chen</ThemedText> // title
+          <ThemedText type="title">Kayla Chen</ThemedText>
 
         </ThemedView>
 

@@ -9,7 +9,17 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "infoPlist": {
+          "CFBundleAllowMixedLocalizations": true,
+          "NSAppTransportSecurity": {
+            "NSExceptionDomains": {
+              "exp.direct": {
+                "NSIncludesSubdomains": true,
+                "NSExceptionAllowsInsecureHTTPLoads": true
+              }
+            }
+          }
+        }
     },
     "android": {
       "adaptiveIcon": {

@@ -12,6 +12,11 @@ const http = require('http')
 dotenv.config();
 
 const app = express();
+const port = 5000;  // Make sure this is 5000
+
+// Your middleware and routes here
+
+
 
 // Middleware
 app.use(cors({
@@ -34,14 +39,19 @@ const corsOptions = {
     }
   }
 };
+// possibly delete later
+// Add this route at the beginning of your route definitions
+// app.get('/api/auth/register', (req, res) => {
+  
+// });
 
 // API Routes
 app.use('/api', imageRoutes); 
 //app.use('/api/auth', authRoutes);
 
-app.get('/search', (req, res) => {
+app.get('/api/auth/register', (req, res) => {
   const searchTerm = req.query.q; // Access query parameters with req.query
-  console.log('SEARCHHH');
+  res('Connection established');
   if (searchTerm) {
     res.send(`Searching for: ${searchTerm}`);
   } else {
@@ -73,6 +83,10 @@ app.post('/api/auth/register', async (req, res) => {
     console.error('Registration error:', error);
     res.status(400).json({ error: error.message });
   }
+});
+
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Server is running on http://localhost:${port}`);
 });
 
 const server = http.createServer(app)

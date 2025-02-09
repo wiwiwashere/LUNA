@@ -6,7 +6,6 @@ import { useRef, useState } from 'react';
 import { Alert, Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import axios from 'axios';
 
-
 interface ButtonProps {
   onPress: () => void;
   title: string;
@@ -72,7 +71,7 @@ export default function Camera() {
 
   async function uploadPhoto (photoData: FormData): Promise <void>{
     try {
-      const response = await axios.post("https://api.imgur.com/3/", photoData, {
+      const response = await axios.post("https://api.imgur.com/3/image", photoData, {
     
         headers: {
           "Authorization": `Client-ID ${process.env.IMGUR_CLIENT_ID}`,
@@ -88,8 +87,10 @@ export default function Camera() {
       const data = await response.data;
   
       if (data.success) {
+        //await sendToFirebase(data.data.link);
         await sendToFirebase(data.data.link);
         Alert.alert("Success!", `Image uploaded to Imgur: ${data.data.link}`);
+        console.log(`${data.data.link}`);
       } else {
         Alert.alert("Error", "Failed to upload image.");
       }
@@ -100,7 +101,18 @@ export default function Camera() {
   }
 
   async function sendToFirebase(imageLink: string): Promise <void>{
-
+    try {
+      const backendUrl = "https://us-central1-luna-d4ef6.cloudfunctions.net/storeImageLink";
+  
+      const response = await axios.post(backendUrl, {
+        imageLink,
+      });
+  
+      console.log("Firebase response:", response.data);
+    } catch (error) {
+      console.error("Error sending image link to Firebase:", error);
+      Alert.alert("Error", "Failed to save image link to Firebase.");
+    }
   }
 
   const handleRetakePhoto = () => setPhoto(null);

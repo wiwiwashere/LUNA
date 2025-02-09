@@ -5,24 +5,37 @@ export default function SignUpScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [healthConditions, setHealthConditions] = useState("");
+  const [allergies, setAllergies] = useState("");
+  const [dietaryRestrictions, setDietaryRestrictions] = useState("");
 
   const handleSignup = async () => {
     try {
+      const responseString = JSON.stringify({ email, 
+        password, 
+        healthConditions,
+        preferences: {
+          allergies: allergies.split(",").map(item => item.trim()),
+          dietaryRestrictions: dietaryRestrictions.split(",").map(item => item.trim()),
+        }
+       });
+       console.log(responseString);
       const response = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, healthConditions }),
+        body: responseString,
       });
 
       const data = await response.json();
+      console.log(data);
+      console.log(response);
 
       if (response.ok) {
         Alert.alert("Success", "User Registered Successfully!");
       } else {
-        Alert.alert("Error", data.error);
+        //Alert.alert("Error", data.error);
       }
     } catch (error) {
-      console.log("error, Failed to connect to the server");
+      console.log("Failed to connect to the server", error);
       Alert.alert("Error", "Failed to connect to the server");
     }
   };
@@ -52,6 +65,21 @@ export default function SignUpScreen() {
         onChangeText={setHealthConditions} 
         placeholderTextColor="#999" 
       />
+      <TextInput 
+        style={styles.input} 
+        placeholder="Allergies (comma-separated)" 
+        value={allergies} 
+        onChangeText={setAllergies} 
+        placeholderTextColor="#999" 
+      />
+      <TextInput 
+        style={styles.input} 
+        placeholder="Dietary Restrictions (comma-separated)" 
+        value={dietaryRestrictions} 
+        onChangeText={setDietaryRestrictions} 
+        placeholderTextColor="#999" 
+      />
+
       <TouchableOpacity style={styles.button} onPress={handleSignup}>
         <Text style={styles.buttonText}>Register</Text>
       </TouchableOpacity>
@@ -95,4 +123,3 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
-
