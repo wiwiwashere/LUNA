@@ -1,6 +1,7 @@
 {
   "expo": {
     "splash": {
+      "backgroundColor": "#000000",
       "image": "./assets/images/splash-background.png",
       "resizeMode": "contain"
     },
@@ -8,7 +9,7 @@
     "slug": "front-end",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/luna_logo.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
