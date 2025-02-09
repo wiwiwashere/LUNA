@@ -1,14 +1,25 @@
 import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from "react-native";
 import React, { useState } from "react";
+import { useRouter } from 'expo-router';
+// import { createUserWithEmailAndPassword } from 'firebase/auth';
+// import { collection, doc, setDoc } from 'firebase/firestore';
+// import { auth, db } from '@/firebaseConfig';
 
 export default function SignUpScreen() {
   const [email, setEmail] = useState("");
+  const [username, setName] = useState("");
   const [password, setPassword] = useState("");
   const [healthConditions, setHealthConditions] = useState("");
   const [allergies, setAllergies] = useState("");
   const [dietaryRestrictions, setDietaryRestrictions] = useState("");
 
   const handleSignup = async () => {
+
+    if (!email || !password || !username) {
+      Alert.alert("Error", "Please enter all fields.");
+      return;
+    }
+
     try {
       const responseString = JSON.stringify({ email, 
         password, 
@@ -38,11 +49,28 @@ export default function SignUpScreen() {
       console.log("Failed to connect to the server", error);
       Alert.alert("Error", "Failed to connect to the server");
     }
+
+    //   Alert.alert("Success", "Account created!");
+    //   // router.push('/(tabs)/login'); // Redirect to login
+    // // } catch (error) {
+    // //   Alert.alert("Error", error.message);
+    // // }
+    // } catch (error) {
+    //   console.log("error, Failed to connect to the server");
+    //   Alert.alert("Error", "Failed to connect to the server");
+    // }
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Sign Up</Text>
+      <TextInput 
+        style={styles.input} 
+        placeholder="Username" 
+        value={username} 
+        onChangeText={setName} 
+        placeholderTextColor="#999" 
+      />
       <TextInput 
         style={styles.input} 
         placeholder="Email" 

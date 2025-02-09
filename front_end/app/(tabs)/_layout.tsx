@@ -1,4 +1,4 @@
-import { Tabs } from 'expo-router';
+import { Tabs, useRouter } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';
 
@@ -8,8 +8,37 @@ import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
+// import { useEffect, useState } from 'react';
+// import { Alert } from 'react-native';
+// import { auth } from '@/firebaseConfig';
+
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  // const router = useRouter();
+  // const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // useEffect(() => {
+  //   const unsubscribe = auth.onAuthStateChanged((user) => {
+  //     setIsAuthenticated(!!user);
+  //   });
+
+  //   return () => unsubscribe();
+  // }, []);
+
+  // const handleProfileAccess = () => {
+  //   if (!isAuthenticated) {
+  //     Alert.alert(
+  //       "Login Required",
+  //       "You must log in to access your profile.",
+  //       [
+  //         { text: "Cancel", style: "cancel" },
+  //         { text: "Log In", onPress: () => router.push('/(tabs)/login') }
+  //       ]
+  //     );
+  //     return false;
+  //   }
+  //   return true;
+  // };
 
   return (
     <Tabs
