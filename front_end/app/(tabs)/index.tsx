@@ -56,7 +56,7 @@ export default function HomeScreen() {
   return (
     // whole screen
     <ImageBackground
-      source={require('@/assets/images/background.png')} // your background image
+      source={require('@/assets/images/background.jpg')} // your background image
       style={styles.backgroundImage} // styles to make it cover the whole screen
       resizeMode="cover" // makes the image cover the screen
     >

@@ -1,116 +1,133 @@
-import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from "react-native";
+import { View, TextInput, Alert, StyleSheet, ImageBackground, SafeAreaView } from "react-native";
 import React, { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { db } from '../../../back_end/services/firebase.js'; // Make sure this path is correct
-import { useNavigation } from "@react-navigation/native"; // To navigate after login
 import { useRouter } from 'expo-router';
+import ButtonComponent from '@/components/Button';
+import { ThemedText } from '@/components/ThemedText';
+import { ThemedView } from '@/components/ThemedView';
 
 export default function LogInScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false); // Track loading state
-  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();  
 
-  const navigation = useNavigation(); // For navigation after login
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert("Error", "Please enter both email and password");
+      return;
+    }
 
-  // Handle the login functionality
-  // const handleLogin = async () => {
-  //   if (!email || !password) {
-  //     Alert.alert("Error", "Please enter both email and password");
-  //     return;
-  //   }
+    setLoading(true);
 
-  //   setLoading(true); // Show loading state
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
 
-  //   try {
-  //     await signInWithEmailAndPassword(auth, email, password);
-  //     setLoading(false); // Hide loading state
-  //     router.push('/(tabs)/camera');
-  //   } catch (error: any) {
-  //     setLoading(false); // Hide loading state
-  //     Alert.alert("Login Failed", error.message); // Show error message
-  //   }
-  // };
+      const data = await response.json();
+
+      if (response.ok) {
+        setLoading(false);
+        router.push('/(tabs)/camera'); 
+      } else {
+        setLoading(false);
+        Alert.alert("Login Failed", data.error || "An error occurred");
+      }
+    } catch (error) {
+      setLoading(false);
+      Alert.alert("Login Failed", (error as any).message);
+    }
+  };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Log In</Text>
+    <ImageBackground
+      source={require('@/assets/images/background.jpg')} // Background image matching the signup screen
+      style={styles.backgroundImage}
+      resizeMode="cover"
+    >
+      <SafeAreaView style={styles.background}>
+        <ThemedView style={styles.container}>
+          <ThemedText style={styles.title} type="title">Log In</ThemedText>
 
-      {/* Email Input */}
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        placeholderTextColor="#999"
-        keyboardType="email-address"
-      />
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+            placeholderTextColor="#888"
+            keyboardType="email-address"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+            placeholderTextColor="#888"
+          />
 
-      {/* Password Input */}
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-        placeholderTextColor="#999"
-      />
-
-      {/* Login Button */}
-      <TouchableOpacity
-        style={styles.button}
-        //onPress={handleLogin}
-        disabled={loading} // Disable button while loading
-      >
-        <Text style={styles.buttonText}>{loading ? "Logging In..." : "Log In"}</Text>
-      </TouchableOpacity>
-
-      {/* Sign Up Button (optional) */}
-      <TouchableOpacity onPress={() => router.push('/(tabs)/signup')}>
-        <Text style={styles.signupText}>Don't have an account? Sign Up</Text>
-      </TouchableOpacity>
-    </View>
+          <ButtonComponent onPress={handleLogin} title={loading ? "Logging In..." : "Log In"} style={styles.button} textStyle={styles.buttonText} />
+        </ThemedView>
+      </SafeAreaView>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  background: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  container: {
+    width: '80%',
     padding: 20,
-    backgroundColor: "white",
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',  
+    borderRadius: 10,
+    alignItems: 'center',
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
+    fontSize: 60,
+    fontWeight: 'bold',
     marginBottom: 20,
-    color: "black",
+    color: "#fff", 
+    fontFamily: "HennyPenny",  
   },
   input: {
     width: "100%",
-    padding: 10,
+    padding: 12,
     marginVertical: 10,
-    borderWidth: 1,
+    borderWidth: 2,
     borderRadius: 5,
-    borderColor: "#ccc",
-    color: "#333",
+    borderColor: "#003366", 
+    color: "#333",  
     fontSize: 16,
+    fontFamily: 'AbhayaLibre',  
+    backgroundColor: "#fff",  
   },
   button: {
-    backgroundColor: "#4CAF50",
-    padding: 12,
-    borderRadius: 5,
-    alignItems: "center",
     marginTop: 10,
+    width: '100%',
+    padding: 15,
+    backgroundColor: '#F0EbE7',  
+    borderRadius: 10,
   },
   buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
+    fontSize: 30,
+    color: '#3E5368',  
+    textAlign: 'center',
+    fontFamily: 'Aboreto',  
   },
-  signupText: {
-    marginTop: 20,
-    color: "#007BFF",
-    textDecorationLine: "underline",
+  backgroundImage: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
   },
 });

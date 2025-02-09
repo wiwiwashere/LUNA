@@ -1,9 +1,9 @@
-import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, ImageBackground, SafeAreaView } from "react-native";
 import React, { useState } from "react";
 import { useRouter } from 'expo-router';
-// import { createUserWithEmailAndPassword } from 'firebase/auth';
-// import { collection, doc, setDoc } from 'firebase/firestore';
-// import { auth, db } from '@/firebaseConfig';
+import ButtonComponent from '@/components/Button';
+import { ThemedText } from '@/components/ThemedText';
+import { ThemedView } from '@/components/ThemedView';
 
 export default function SignUpScreen() {
   const [email, setEmail] = useState("");
@@ -14,7 +14,6 @@ export default function SignUpScreen() {
   const [dietaryRestrictions, setDietaryRestrictions] = useState("");
 
   const handleSignup = async () => {
-
     if (!email || !password || !username) {
       Alert.alert("Error", "Please enter all fields.");
       return;
@@ -38,116 +37,127 @@ export default function SignUpScreen() {
 
       const data = await response.json();
       console.log(data);
-      console.log(response);
 
       if (response.ok) {
         Alert.alert("Success", "User Registered Successfully!");
       } else {
-        //Alert.alert("Error", data.error);
+        Alert.alert("Error", data.error);
       }
     } catch (error) {
       console.log("Failed to connect to the server", error);
       Alert.alert("Error", "Failed to connect to the server");
     }
-
-    //   Alert.alert("Success", "Account created!");
-    //   // router.push('/(tabs)/login'); // Redirect to login
-    // // } catch (error) {
-    // //   Alert.alert("Error", error.message);
-    // // }
-    // } catch (error) {
-    //   console.log("error, Failed to connect to the server");
-    //   Alert.alert("Error", "Failed to connect to the server");
-    // }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Sign Up</Text>
-      <TextInput 
-        style={styles.input} 
-        placeholder="Username" 
-        value={username} 
-        onChangeText={setName} 
-        placeholderTextColor="#999" 
-      />
-      <TextInput 
-        style={styles.input} 
-        placeholder="Email" 
-        value={email} 
-        onChangeText={setEmail} 
-        placeholderTextColor="#999" 
-      />
-      <TextInput 
-        style={styles.input} 
-        placeholder="Password" 
-        secureTextEntry 
-        value={password} 
-        onChangeText={setPassword} 
-        placeholderTextColor="#999" 
-      />
-      <TextInput 
-        style={styles.input} 
-        placeholder="Health Conditions (comma-separated)" 
-        value={healthConditions} 
-        onChangeText={setHealthConditions} 
-        placeholderTextColor="#999" 
-      />
-      <TextInput 
-        style={styles.input} 
-        placeholder="Allergies (comma-separated)" 
-        value={allergies} 
-        onChangeText={setAllergies} 
-        placeholderTextColor="#999" 
-      />
-      <TextInput 
-        style={styles.input} 
-        placeholder="Dietary Restrictions (comma-separated)" 
-        value={dietaryRestrictions} 
-        onChangeText={setDietaryRestrictions} 
-        placeholderTextColor="#999" 
-      />
+    <ImageBackground
+      source={require('@/assets/images/background.jpg')} // Background image
+      style={styles.backgroundImage}
+      resizeMode="cover"
+    >
+      <SafeAreaView style={styles.background}>
+        <ThemedView style={styles.container}>
+          <ThemedText style={styles.title} type="title">Sign Up</ThemedText>
 
-      <TouchableOpacity style={styles.button} onPress={handleSignup}>
-        <Text style={styles.buttonText}>Register</Text>
-      </TouchableOpacity>
-    </View>
+          <TextInput 
+            style={styles.input} 
+            placeholder="Username" 
+            value={username} 
+            onChangeText={setName} 
+            placeholderTextColor="#888" 
+          />
+          <TextInput 
+            style={styles.input} 
+            placeholder="Email" 
+            value={email} 
+            onChangeText={setEmail} 
+            placeholderTextColor="#888" 
+          />
+          <TextInput 
+            style={styles.input} 
+            placeholder="Password" 
+            secureTextEntry 
+            value={password} 
+            onChangeText={setPassword} 
+            placeholderTextColor="#888" 
+          />
+          <TextInput 
+            style={styles.input} 
+            placeholder="Health Conditions (comma-separated)" 
+            value={healthConditions} 
+            onChangeText={setHealthConditions} 
+            placeholderTextColor="#888" 
+          />
+          <TextInput 
+            style={styles.input} 
+            placeholder="Allergies (comma-separated)" 
+            value={allergies} 
+            onChangeText={setAllergies} 
+            placeholderTextColor="#888" 
+          />
+          <TextInput 
+            style={styles.input} 
+            placeholder="Dietary Restrictions (comma-separated)" 
+            value={dietaryRestrictions} 
+            onChangeText={setDietaryRestrictions} 
+            placeholderTextColor="#888" 
+          />
+
+          <ButtonComponent onPress={handleSignup} title="Register" style={styles.button} textStyle={styles.buttonText} />
+        </ThemedView>
+      </SafeAreaView>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  background: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  container: {
+    width: '80%',
     padding: 20,
-    backgroundColor: "white"
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',  
+    borderRadius: 10,
+    alignItems: 'center',
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
+    fontSize: 60,
+    fontWeight: 'bold',
     marginBottom: 20,
-    color: "black",
+    color: "#fff", 
+    fontFamily: "HennyPenny",  
   },
   input: {
     width: "100%",
-    padding: 10,
+    padding: 12,
     marginVertical: 10,
-    borderWidth: 1,
+    borderWidth: 2,  
     borderRadius: 5,
-    borderColor: "#ccc",
+    borderColor: "#003366", 
     color: "#333",  
-    fontSize: 16,   
+    fontSize: 16,
+    fontFamily: 'AbhayaLibre', 
+    backgroundColor: "#fff", 
   },
   button: {
-    backgroundColor: "#4CAF50",
-    padding: 12,
-    borderRadius: 5,
-    alignItems: "center",
     marginTop: 10,
+    width: '100%',
+    padding: 15,
+    backgroundColor: '#F0EbE7',
+    borderRadius: 10,
   },
   buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
+    fontSize: 30,
+    color: '#3E5368',
+    textAlign: 'center',
+    fontFamily: 'Aboreto', 
+  },
+  backgroundImage: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
   },
 });
