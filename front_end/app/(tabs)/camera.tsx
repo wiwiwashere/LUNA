@@ -103,23 +103,6 @@ export default function Camera() {
     }
   }
 
-  
-
-  async function sendToFirebase(imageLink: string): Promise <void>{
-    try {
-      const backendUrl = "https://us-central1-luna-d4ef6.cloudfunctions.net/storeImageLink";
-  
-      const response = await axios.post(backendUrl, {
-        imageLink,
-      });
-  
-      console.log("Firebase response:", response.data);
-    } catch (error) {
-      console.error("Error sending image link to Firebase:", error);
-      Alert.alert("Error", "Failed to save image link to Firebase.");
-    }
-  }
-
   async function detectTextFromImage(imageLink: string): Promise<void> {
     try {
       console.log("Google Vision API Key: AIzaSyDFXACzuiodXtuRhmQg_Ioc0-w-CaPwENI");
@@ -129,7 +112,7 @@ export default function Camera() {
           {
             image: {
               source: {
-                imageUri: imageLink, // Ensure this is a valid image URL
+                imageUri: imageLink, 
               },
             },
             features: [
@@ -145,6 +128,7 @@ export default function Camera() {
       // Make the request to Google Vision API
       const response = await axios.post(visionApiUrl, requestBody);
       console.log('Google Vision API Response:', response.data); // Log full response
+
   
       const textAnnotations = response.data.responses[0].textAnnotations;
   
@@ -152,6 +136,7 @@ export default function Camera() {
         const detectedText = textAnnotations[0].description;
         Alert.alert("Text Detected", detectedText);
         console.log("Detected Text: ", detectedText); // Log the detected text
+        extractIngredients(detectedText);
       } else {
         Alert.alert("No Text Detected", "No text found in the image.");
       }
@@ -172,6 +157,16 @@ export default function Camera() {
       Alert.alert("Text Detection Error", "Failed to detect text from the image.");
     }
   }
+  function extractIngredients(text: string): string[] {
+    const match = text.match(/ingredients: (.*?\.)/i); // Capture from "ingredients" to the first period
+    if (!match) return []; // Return empty array if no match
+
+    return match[1] // Extract matched text
+        .replace(/\./, '') // Remove the final period
+        .split(/\s*,\s*/) // Split by commas, trimming spaces
+        .map(item => item.trim()) // Trim each ingredient
+        .filter(item => item.length > 0); // Remove empty items
+}
   
 
   const handleRetakePhoto = () => setPhoto(null);

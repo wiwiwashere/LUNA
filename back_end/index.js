@@ -4,6 +4,7 @@ const authRoutes = require("./controllers/auth");
 const dotenv = require('dotenv');
 const cors = require('cors');
 const { createProxyMiddleware } = require('http-proxy-middleware');
+const { initializeApp } = require('firebase/app');
 const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } = require('firebase/auth');
 const { getFirestore, doc, setDoc, getDoc } = require('firebase/firestore');
 const { auth, db } = require('./services/firebase');
@@ -13,9 +14,7 @@ dotenv.config();
 
 const app = express();
 const port = 5000;  // Make sure this is 5000
-
-// Your middleware and routes here
-
+const app = initializeApp(firebaseConfig);
 
 
 // Middleware
@@ -44,6 +43,23 @@ const corsOptions = {
 app.use('/api', imageRoutes); 
 //app.use('/api/auth', authRoutes);
 
+// GET USER INFO!
+app.get('/api/user/:uid', async (req, res) => {
+  try {
+    const { uid } = req.params;
+    const userDoc = await getDoc(doc(db, 'users', uid));
+
+    if (!userDoc.exists()) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json(userDoc.data()); // Return user data to frontend
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 app.get('/api/auth/register', (req, res) => {
   const searchTerm = req.query.q; // Access query parameters with req.query
   res('Connection established');
@@ -55,9 +71,18 @@ app.get('/api/auth/register', (req, res) => {
 });
 
 app.post('/api/auth/register', async (req, res) => {
-  const { email, password, healthConditions } = req.body;
+  console.log('Received request body:', req.body);  // Log the entire body
+  const { email, username, password, healthConditions, allergies, dietaryRestrictions } = req.body;
   // const searchTerm = req.query.q; // Access query parameters with req.query
   console.log('REGISTER CALLED::::');
+  // Log individual fields to ensure they are properly parsed
+  console.log('Email:', email);
+  console.log('Username:', username);
+  console.log('Password:', password);
+  console.log('Health Conditions:', healthConditions);
+  console.log('Allergies:', allergies);
+  console.log('Dietary Restrictions:', dietaryRestrictions);
+
   try {
     // Register user with Firebase Auth
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -65,13 +90,11 @@ app.post('/api/auth/register', async (req, res) => {
 
     // Store user data in Firestore
     await setDoc(doc(db, 'users', user.uid), {
-      username: user.username,//check if it works now
       email: user.email,
+      username: username || "", //check if it works now
       healthConditions: healthConditions || [],
-      preferences: {
-        allergies: [],
-        dietaryRestrictions: [],
-      },
+      allergies: allergies || [],
+      dietaryRestrictions: dietaryRestrictions || [],
     });
 
     res.status(201).json(user);

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { View, Text, ImageBackground, Image, StyleSheet, Platform, Alert, TouchableOpacity, SafeAreaView } from 'react-native';
 import React, {useState, useEffect, useCallback} from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -41,23 +42,33 @@ export default function HomeScreen() {
   };
 
   // const { user } = useAuth();
+=======
+import { ImageBackground, SafeAreaView, StyleSheet, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { useRouter } from 'expo-router';
+import * as ImagePicker from 'expo-image-picker';
+import ButtonComponent from '@/components/Button';
+import { ThemedText } from '@/components/ThemedText';
+import { ThemedView } from '@/components/ThemedView';
+import axios from 'axios';
 
-  // pull user
-  // useEffect(() => {
-  //   const auth = getAuth(); // Get the auth instance
-  
-  //   const user = auth.currentUser; // Get the current signed-in user
-  
-  //   if (user) {
-  //     console.log("User is signed in:", user.email); // Access user details like email, uid, etc.
-  //   } else {
-  //     console.log("No user is signed in.");
-  //   }
-  // }, []);
+export default function HomeScreen() {
+  const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(false);
+>>>>>>> 6bc2f2f81b376e85c00a355839975eeed3dd9d90
 
-  // insets
-  const insets = useSafeAreaInsets();
+  // Handle image upload
+  const handleUploadPress = async () => {
+    try {
+      // Request permissions to access the image gallery
+      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
+      if (permissionResult.granted === false) {
+        Alert.alert("Permission Required", "You need to grant permission to access your photo library.");
+        return;
+      }
+
+<<<<<<< HEAD
   const [appReady, setAppReady] = useState(false);
   const [showTabBar, setShowTabBar] = useState(false);
 
@@ -98,42 +109,126 @@ export default function HomeScreen() {
     );
   }
 
+=======
+      // Launch image picker
+      const pickerResult = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: false,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      if (pickerResult.canceled) {
+        Alert.alert("Upload Cancelled", "You didn't pick any image.");
+        return;
+      }
+
+      // Ensure the pickerResult.assets is not empty
+      if (!pickerResult.assets || pickerResult.assets.length === 0) {
+        Alert.alert("No Image Selected", "No image was selected. Please try again.");
+        return;
+      }
+
+      // Access the first asset's URI
+      const { uri } = pickerResult.assets[0];
+
+      // If an image is selected, upload and process it
+      setLoading(true);
+      const formData = new FormData();
+      formData.append("image", {
+        uri,
+        type: "image/jpeg",
+        name: "uploaded_photo.jpg",
+      } as unknown as Blob);
+
+      await uploadPhoto(formData);
+    } catch (error) {
+      console.error("Upload error:", error);
+      Alert.alert("Error", "An error occurred while selecting the image.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  async function uploadPhoto(photoData: FormData): Promise<void> {
+    try {
+      const response = await axios.post("https://api.imgur.com/3/image", photoData, {
+        headers: {
+          "Authorization": `Client-ID ${process.env.IMGUR_CLIENT_ID}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      const { data } = response;
+      if (data.success) {
+        await detectTextFromImage(data.data.link);  // Call your function to detect text from the uploaded image
+        Alert.alert("Success", `Image uploaded: ${data.data.link}`);
+      } else {
+        Alert.alert("Error", "Failed to upload image.");
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+      Alert.alert("Upload Error", "Something went wrong!");
+    }
+  }
+
+  async function detectTextFromImage(imageLink: string): Promise<void> {
+    try {
+        console.log("Google Vision API Key: AIzaSyDFXACzuiodXtuRhmQg_Ioc0-w-CaPwENI");
+        const visionApiUrl = "https://vision.googleapis.com/v1/images:annotate?key=AIzaSyDFXACzuiodXtuRhmQg_Ioc0-w-CaPwENI";
+        const requestBody = {
+        requests: [
+          {
+            image: {
+              source: { imageUri: imageLink },
+            },
+            features: [
+              {
+                type: "TEXT_DETECTION",
+                maxResults: 1,
+              },
+            ],
+          },
+        ],
+      };
+
+      const response = await axios.post(visionApiUrl, requestBody);
+      const textAnnotations = response.data.responses[0].textAnnotations;
+
+      if (textAnnotations && textAnnotations.length > 0) {
+        const detectedText = textAnnotations[0].description;
+        Alert.alert("Text Detected", detectedText);
+        console.log("Detected Text:", detectedText);
+      } else {
+        Alert.alert("No Text Detected", "No text found in the image.");
+      }
+    } catch (error) {
+      console.error("Error in text detection:", error);
+      Alert.alert("Text Detection Error", "Failed to detect text from the image.");
+    }
+  }
+>>>>>>> 6bc2f2f81b376e85c00a355839975eeed3dd9d90
 
   return (
-    // whole screen
     <ImageBackground
-      source={require('@/assets/images/background.jpg')} // your background image
-      style={styles.backgroundImage} // styles to make it cover the whole screen
-      resizeMode="cover" // makes the image cover the screen
+      source={require('@/assets/images/background.jpg')}
+      style={styles.backgroundImage}
+      resizeMode="cover"
     >
-
       <SafeAreaView style={styles.background}>
-      {/* title box */}
         <ThemedView style={styles.titleContainer}>
           <ThemedText type="title">LUNA</ThemedText>
+          <ThemedView style={styles.stepContainer}>
+            <ThemedText type="subtitle">
+              Get started by scanning or uploading a food label
+            </ThemedText>
 
-          {/* welcome user and greet them by name
-          <ThemedText type="welcome">Welcome, {user.email}</ThemedText> */}
-
-          {/* container for subtitle / instructions */}
-          <ThemedView style={[styles.stepContainer, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
-            {/* mini thing to tell users what to do */}
-            <ThemedText type="subtitle">get started by scanning or uploading a food label</ThemedText>
-
-            {/* scan Button */}
-            {/* <ButtonComponent onPress={handleCameraPress} title="SCAN" /> */}
-
-            <ButtonComponent title="SCAN" onPress={handleCameraPress}/>
-          
-            {/* upload button */}
-            <ButtonComponent onPress={handleUploadPress} title="UPLOAD" />
-            
+            {/* Scan Button */}
+            <ButtonComponent title="SCAN" onPress={() => router.push('/(tabs)/camera')} />
+            {/* Upload Button */}
+            <ButtonComponent title={loading ? "Uploading..." : "UPLOAD"} onPress={handleUploadPress} />
           </ThemedView>
-
         </ThemedView>
-
-        {/* Conditionally render Camera component */}
-        {isCameraVisible && <Camera />}
       </SafeAreaView>
     </ImageBackground>
   );
@@ -158,19 +253,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 0,
   },
-  content: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
   backgroundImage: {
-    position: 'absolute', // Ensures it stays in place
-    width: '100%', 
+    position: 'absolute',
+    width: '100%',
     height: '100%',
     flex: 1,
   },
 });
 
+<<<<<<< HEAD
     // starter code fomr expo
     //   <ThemedView style={styles.stepContainer}>
     //     <ThemedText type="subtitle">Step 1: Try it</ThemedText>
@@ -250,3 +341,5 @@ const styles = StyleSheet.create({
 //     elevation: 5,
 //   },
 // });
+=======
+>>>>>>> 6bc2f2f81b376e85c00a355839975eeed3dd9d90

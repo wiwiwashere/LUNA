@@ -20,14 +20,13 @@ export default function SignUpScreen() {
     }
 
     try {
-      const responseString = JSON.stringify({
-        email,
-        password,
-        healthConditions,
-        preferences: {
-          allergies: allergies.split(",").map(item => item.trim()),
-          dietaryRestrictions: dietaryRestrictions.split(",").map(item => item.trim()),
-        }
+      const responseString = JSON.stringify({ 
+        email, 
+        username,
+        password, 
+        healthConditions: healthConditions.split(",").map(item => item.trim()),
+        allergies: allergies.split(",").map(item => item.trim()),
+        dietaryRestrictions: dietaryRestrictions.split(",").map(item => item.trim()),
        });
        console.log(responseString);
       const response = await fetch("http://10.136.1.40:5000/api/auth/register", {
@@ -58,7 +57,7 @@ export default function SignUpScreen() {
     >
       <SafeAreaView style={styles.background}>
         <ThemedView style={styles.container}>
-          <ThemedText style={styles.title} type="title">Sign Up</ThemedText>
+        <ThemedText style={[styles.title, { color: "#003366" }]} type="title">Log In</ThemedText>
 
           <TextInput 
             style={styles.input} 
