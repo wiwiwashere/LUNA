@@ -1,5 +1,5 @@
 import { ImageBackground, Image, StyleSheet, Platform, Alert, TouchableOpacity, SafeAreaView } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -10,6 +10,9 @@ import Camera from './camera';
 import { Link, Tabs, useRouter } from 'expo-router';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useNavigation } from '@react-navigation/native';
+import { getAuth } from "firebase/auth";
+//import { db } from '../../../back_end/services/firebase.js';
+//import { collection, getDocs } from 'firebase/firestore';
 
 
 export default function HomeScreen() {
@@ -17,6 +20,22 @@ export default function HomeScreen() {
   // camera state
   const [isCameraVisible, setIsCameraVisible] = useState(false);
   const router = useRouter();
+  const [users, setUsers] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  // const { user } = useAuth();
+
+  // pull user
+  // useEffect(() => {
+  //   const auth = getAuth(); // Get the auth instance
+  
+  //   const user = auth.currentUser; // Get the current signed-in user
+  
+  //   if (user) {
+  //     console.log("User is signed in:", user.email); // Access user details like email, uid, etc.
+  //   } else {
+  //     console.log("No user is signed in.");
+  //   }
+  // }, []);
 
   // insets
   const insets = useSafeAreaInsets();
@@ -44,10 +63,10 @@ export default function HomeScreen() {
       <SafeAreaView style={styles.background}>
       {/* title box */}
         <ThemedView style={styles.titleContainer}>
-          <ThemedText type="title">LUNA</ThemedText> // title
+          <ThemedText type="title">LUNA</ThemedText>
 
-          {/* welcome user and greet them by name */}
-          <ThemedText type="welcome">welcome, kayla</ThemedText>
+          {/* welcome user and greet them by name
+          <ThemedText type="welcome">Welcome, {user.email}</ThemedText> */}
 
           {/* container for subtitle / instructions */}
           <ThemedView style={[styles.stepContainer, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
