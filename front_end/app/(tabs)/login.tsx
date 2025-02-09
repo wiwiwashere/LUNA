@@ -39,6 +39,13 @@ export default function LogInScreen() {
         onChangeText={setPassword} 
         placeholderTextColor="#999" 
       />
+      {/* <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <Text style={styles.buttonText}>Log In</Text>
+      </TouchableOpacity>
+      {/* Navigation Links */}
+      {/* <TouchableOpacity onPress={() => router.push('/(tabs)/signup')}>
+        <Text style={styles.linkText}>Don't have an account? Create Account</Text>
+      </TouchableOpacity> */}
     </View>
   );
 }
