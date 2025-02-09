@@ -60,9 +60,18 @@ app.get('/api/auth/register', (req, res) => {
 });
 
 app.post('/api/auth/register', async (req, res) => {
-  const { email, password, healthConditions } = req.body;
+  console.log('Received request body:', req.body);  // Log the entire body
+  const { email, username, password, healthConditions, allergies, dietaryRestrictions } = req.body;
   // const searchTerm = req.query.q; // Access query parameters with req.query
   console.log('REGISTER CALLED::::');
+  // Log individual fields to ensure they are properly parsed
+  console.log('Email:', email);
+  console.log('Username:', username);
+  console.log('Password:', password);
+  console.log('Health Conditions:', healthConditions);
+  console.log('Allergies:', allergies);
+  console.log('Dietary Restrictions:', dietaryRestrictions);
+
   try {
     // Register user with Firebase Auth
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -70,13 +79,11 @@ app.post('/api/auth/register', async (req, res) => {
 
     // Store user data in Firestore
     await setDoc(doc(db, 'users', user.uid), {
-      username: user.username,//check if it works now
       email: user.email,
+      username: username || "", //check if it works now
       healthConditions: healthConditions || [],
-      preferences: {
-        allergies: [],
-        dietaryRestrictions: [],
-      },
+      allergies: allergies || [],
+      dietaryRestrictions: dietaryRestrictions || [],
     });
 
     res.status(201).json(user);

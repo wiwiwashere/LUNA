@@ -6,7 +6,7 @@ const { auth, db } = require('../services/firebase');
 const router = express.Router();
 
 app.post('/register', async (req, res) => {
-  const { email, password, healthConditions } = req.body;
+  const { email, username, password, healthConditions } = req.body;
   console.log('Email', email);
   console.log('HITTING REGISTER:::::::');
   
@@ -18,11 +18,10 @@ app.post('/register', async (req, res) => {
     // Store user data in Firestore
     await setDoc(doc(db, 'users', user.uid), {
       email: user.email,
+      username: user.username,
       healthConditions: healthConditions || [],
-      preferences: {
-        allergies: [],
-        dietaryRestrictions: [],
-      },
+      allergies: user.allergies || [],
+      dietaryRestrictions: user.dietaryRestrictions || [],
     });
 
     res.status(201).json(user);
@@ -56,8 +55,10 @@ router.post('/login', async (req, res) => {
         uid: user.uid,
         email: user.email,
       },
-      preferences: userData.preferences,
+      allergies:userData.allergies,
+      dietaryRestrictions: userData.dietaryRestrictions,
       healthConditions: userData.healthConditions,
+      username: userData.username,
     });
   } catch (error) {
     console.error('Login error:', error);

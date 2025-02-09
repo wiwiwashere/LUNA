@@ -40,7 +40,6 @@ const verifyToken = async (token) => {
   }
 };
 
-const app2 = express();
 
 // const cors = require("cors")({ origin: true });
 

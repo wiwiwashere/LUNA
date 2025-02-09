@@ -21,13 +21,13 @@ export default function SignUpScreen() {
     }
 
     try {
-      const responseString = JSON.stringify({ email, 
+      const responseString = JSON.stringify({ 
+        email, 
+        username,
         password, 
-        healthConditions,
-        preferences: {
-          allergies: allergies.split(",").map(item => item.trim()),
-          dietaryRestrictions: dietaryRestrictions.split(",").map(item => item.trim()),
-        }
+        healthConditions: healthConditions.split(",").map(item => item.trim()),
+        allergies: allergies.split(",").map(item => item.trim()),
+        dietaryRestrictions: dietaryRestrictions.split(",").map(item => item.trim()),
        });
        console.log(responseString);
       const response = await fetch("http://10.136.1.40:5000/api/auth/register", {
