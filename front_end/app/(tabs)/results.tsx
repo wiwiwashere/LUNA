@@ -4,26 +4,29 @@ import React, { useEffect } from "react";
 import ButtonComponent from '@/components/Button';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { generateFeedback } from './openai'
 
 export default function ResultsScreen() {
-  const { result } = useLocalSearchParams();
+  // const { result } = useLocalSearchParams();
   const router = useRouter();
 
+  const { ingredients } = useLocalSearchParams();  // Get userId from URL
+
   useEffect(() => {
-    console.log("Raw result:", result);
-    if (result) {
+    console.log("ingredients: ", ingredients);
+    if (ingredients) {
       try {
-        const parsed = JSON.parse(result as string);
+        const parsed = JSON.parse(ingredients as string);
         console.log("Parsed result:", parsed);
       } catch (e) {
         console.error("Parsing error:", e);
       }
     }
-  }, [result]);
+  }, [ingredients]);
 
   let parsedResult = null;
   try {
-    parsedResult = result ? JSON.parse(result as string) : null;
+    parsedResult = ingredients ? JSON.parse(ingredients as string) : null;
   } catch (e) {
     console.error("Error parsing result:", e);
   }
@@ -35,6 +38,26 @@ export default function ResultsScreen() {
     }
 
     console.log("Rendering analysis with:", parsedResult);
+
+    // send the ingredients
+    const sendIngredientsToOpenAI = async (ingredients: string[]) => {
+      try {
+        const response = await axios.post('https://api.openai.com/v1/completions', {
+          model: 'text-davinci-003', // Or whichever model you want to use
+          prompt: `Given the following ingredients, analyze them: ${ingredients.join(', ')}`,
+          max_tokens: 150,
+        }, {
+          headers: {
+            'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+        });
+  
+        console.log('OpenAI response:', response.data);
+      } catch (error) {
+        console.error('Error sending ingredients to OpenAI:', error);
+      }
+    };
 
     return (
       <ThemedView style={styles.analysisContainer}>
@@ -71,7 +94,7 @@ export default function ResultsScreen() {
             ) : (
               <View>
                 <ThemedText style={styles.errorText}>No result found.</ThemedText>
-                <ThemedText style={styles.debugText}>Raw data: {result}</ThemedText>
+                <ThemedText style={styles.debugText}>Raw data: {ingredients}</ThemedText>
               </View>
             )}
 

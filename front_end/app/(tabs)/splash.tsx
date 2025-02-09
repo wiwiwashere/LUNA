@@ -22,7 +22,7 @@ export default function SplashScreen() {
 
   return (
     <ImageBackground
-          source={require('../assets/images/splash-background.png')} // your background image
+          source={require('../../assets/images/splash-background.png')} // your background image
           style={styles.background} // styles to make it cover the whole screen
           resizeMode="cover" // makes the image cover the screen
         >

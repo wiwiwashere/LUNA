@@ -41,9 +41,18 @@ export default function LogInScreen() {
         router.push({
           pathname: "/(tabs)/profile/",
           params: {
-            token: data.user.uid
+            userId: data.user.uid
           }
        })
+
+      // push to openai
+       router.push({
+        pathname: "/(tabs)/profile/",
+        params: {
+          userId: data.user.uid
+
+        }
+      })
         // router.push({ pathname: '/(tabs)/profile/${data.user.uid}', params: data.user.uid }); // Remove the braces in params
 
         console.log('before'); 

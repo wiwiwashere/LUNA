@@ -20,7 +20,7 @@ export default function  ProfileScreen(){
 
   console.log("hereherere");
   const { userId } = useLocalSearchParams();  // Get userId from URL
-  console.log(userId, );
+  console.log("user! ", userId);
 
   // Listen for authentication state changes
   useEffect(() => {
@@ -28,14 +28,15 @@ export default function  ProfileScreen(){
     // const app = initializeApp(firebaseConfig);
     // const auth = getAuth(app);
 
-    console.log('auth object!!!!!!:', auth);  // Debugging log
+    console.log('auth object!!!!!!:', userId);  // Debugging log
     
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUser(user);
-        console.log('setUser user what is user', user);
+    const unsubscribe = onAuthStateChanged(auth, (userId) => {
+      if (userId != 'undefined') {
+        setUser(userId);
+        console.log('setUser user what is user', userId);
       } else {
         router.replace("/(tabs)/login");
+        console.log('sent back to login');
       }
     });
 
@@ -44,15 +45,16 @@ export default function  ProfileScreen(){
 
   // Fetch user data after authentication
   useEffect(() => {
-    if (!user) return;
+    if (!userId) return;
 
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`http://10.136.1.40:5000/api/user/${data.user.uid}`);
+        const response = await fetch(`http://10.136.1.40:5000/api/user/${userId}`);
         const data = await response.json();
 
         if (response.ok) {
           setUsername(data.username);
+          console.log("getting to set username");
         } else {
           Alert.alert('Error', data.error);
         }
@@ -65,7 +67,7 @@ export default function  ProfileScreen(){
     };
 
     fetchUserData();
-  }, [user]);
+  }, [userId]);
 
   const handleLogout = () => {
     router.push('/(tabs)/login');

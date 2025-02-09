@@ -11,8 +11,6 @@ export default function HomeScreen() {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
 
-  // insets
-  const insets = useSafeAreaInsets();
   // Handle image upload
   const handleUploadPress = async () => {
     try {

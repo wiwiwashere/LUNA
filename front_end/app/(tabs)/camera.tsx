@@ -73,14 +73,18 @@ export default function Camera() {
 
   async function uploadPhoto (photoData: FormData): Promise <void>{
     try {
+      console.log("Imgur ID", "424c90175b7197a");
+      const Id = "424c90175b7197a";
       const response = await axios.post("https://api.imgur.com/3/image", photoData, {
     
         headers: {
-          "Authorization": `Client-ID ${process.env.IMGUR_CLIENT_ID}`,
+          "Authorization": `Client-ID 424c90175b7197a`,
           "Content-Type": "multipart/form-data"
 
       }
     });
+    console.log(response.data);
+    console.log("sent to imgurapi");
   
       // Convert response headers to a usable format
       const clientRemaining = response.headers["x-ratelimit-clientremaining"];
@@ -90,7 +94,6 @@ export default function Camera() {
   
       if (data.success) {
         await detectTextFromImage(data.data.link);
-        // await sendToFirebase(data.data.link);
         Alert.alert("Success!", `Image uploaded to Imgur: ${data.data.link}`);
         console.log(`${data.data.link}`);
       } else {
@@ -135,7 +138,14 @@ export default function Camera() {
         const detectedText = textAnnotations[0].description;
         Alert.alert("Text Detected", detectedText);
         console.log("Detected Text: ", detectedText); // Log the detected text
-        extractIngredients(detectedText);
+        ingredients = extractIngredients(detectedText);
+        console.log(ingredients);
+        router.push({
+          pathname: "/(tabs)/results/",
+          params: {
+            ingredients: ingredients
+          }
+        })
       } else {
         Alert.alert("No Text Detected", "No text found in the image.");
       }
@@ -157,7 +167,7 @@ export default function Camera() {
     }
   }
   function extractIngredients(text: string): string[] {
-    const match = text.match(/ingredients: (.*?\.)/i); // Capture from "ingredients" to the first period
+    const match = text.match(/INGREDIENTS: (.*?\.)/i); // Capture from "ingredients" to the first period
     if (!match) return []; // Return empty array if no match
 
     return match[1] // Extract matched text
