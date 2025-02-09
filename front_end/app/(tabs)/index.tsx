@@ -1,5 +1,5 @@
-import { ImageBackground, Image, StyleSheet, Platform, Alert, TouchableOpacity, SafeAreaView } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import { View, Text, ImageBackground, Image, StyleSheet, Platform, Alert, TouchableOpacity, SafeAreaView } from 'react-native';
+import React, {useState, useEffect, useCallback} from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -11,18 +11,35 @@ import { Link, Tabs, useRouter } from 'expo-router';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useNavigation } from '@react-navigation/native';
 import { getAuth } from "firebase/auth";
+import * as SplashScreen from 'expo-splash-screen'
 
 //import { db } from '../../../back_end/services/firebase.js';
 //import { collection, getDocs } from 'firebase/firestore';
 
+SplashScreen.preventAutoHideAsync();
+
 
 export default function HomeScreen() {
+
   const navigation = useNavigation();
   // camera state
   const [isCameraVisible, setIsCameraVisible] = useState(false);
   const router = useRouter();
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+
+  // action for camera press
+  const handleCameraPress = () => {
+    // navigation.navigate('./(tabs)/camera');
+    // setIsCameraVisible(prevState => !prevState); 
+    router.push('/(tabs)/camera'); 
+  };
+
+  // action for upload button
+  const handleUploadPress = () => {
+    Alert.alert('upload pressed!'); 
+  };
+
   // const { user } = useAuth();
 
   // pull user
@@ -41,17 +58,46 @@ export default function HomeScreen() {
   // insets
   const insets = useSafeAreaInsets();
 
-  // action for camera press
-  const handleCameraPress = () => {
-    // navigation.navigate('./(tabs)/camera');
-    // setIsCameraVisible(prevState => !prevState); 
-    router.push('/(tabs)/camera'); 
-  };
+  const [appReady, setAppReady] = useState(false);
+  const [showTabBar, setShowTabBar] = useState(false);
 
-  // action for upload button
-  const handleUploadPress = () => {
-    Alert.alert('upload pressed!'); 
-  };
+  useEffect(() => {
+    const loadResources = async () => {
+      await new Promise(resolve => setTimeout(resolve, 12000)); // ✅ Simulate loading (12 sec)
+      setAppReady(true);
+      // await SplashScreen.hideAsync(); // ✅ Hide splash screen after loading
+    };
+
+    loadResources();
+  }, []);
+
+  // ✅ Hide splash screen after UI updates
+  const onLayoutRootView = useCallback(async () => {
+    requestAnimationFrame(async () => { 
+      try {
+        await SplashScreen.hideAsync(); // ✅ Prevents errors if already hidden
+
+        // ✅ Delay tab bar by 1 second
+        setTimeout(() => {
+          setShowTabBar(true);
+          navigation.setOptions({ tabBarStyle: { display: "flex" } });
+        }, 5000);
+      } catch (e) {
+        console.warn("SplashScreen already hidden or error:", e);
+      }
+    });
+  }, [appReady]);
+
+  if (!appReady) {
+    return (
+      <ImageBackground
+        source={require("@/assets/images/splash-background.png")} // ✅ Use full-screen splash
+        style={styles.background}
+        resizeMode="cover"
+      />
+    );
+  }
+
 
   return (
     // whole screen

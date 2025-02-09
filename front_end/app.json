@@ -1,5 +1,9 @@
 {
   "expo": {
+    "splash": {
+      "image": "./assets/images/splash-background.png",
+      "resizeMode": "contain"
+    },
     "name": "front-end",
     "slug": "front-end",
     "version": "1.0.0",
@@ -37,10 +41,9 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/splash-background.png",
           "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#3E5368"
+          "resizeMode": "contain"
         }
       ],
       "expo-font"
