@@ -1,47 +1,54 @@
-import { StyleSheet, Image, Platform, SafeAreaView, Alert, TouchableOpacity, ImageBackground } from 'react-native';
-import { ThemedText } from '@/components/ThemedText'; // Make sure this is imported
-import { ThemedView } from '@/components/ThemedView';
 import React, { useState, useEffect } from 'react';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import ButtonComponent from '@/components/Button';
+import { StyleSheet, SafeAreaView, Alert, ImageBackground } from 'react-native';
+import { ThemedText } from '@/components/ThemedText';
+import { ThemedView } from '@/components/ThemedView';
 import { useRouter } from 'expo-router';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { getDoc, doc } from 'firebase/firestore'; 
-import Constants from 'expo-constants'; // Import expo-constants
+import { onAuthStateChanged, getAuth } from 'firebase/auth';
+import { auth } from '../../firebaseConfig'; // Correct import
+import ButtonComponent from '@/components/Button';
+import { useLocalSearchParams } from "expo-router";
 
-// might delete later
-import { auth, onAuthStateChanged } from '@/firebaseConfig';
+// ok
+import { firebaseConfig } from '../../firebaseConfig';
+import { initializeApp } from 'firebase/app';
 
-export default function ProfileScreen() {
-  const [user, setUser] = useState(null);
+export default function  ProfileScreen(){
+  const [user, setUser] = useState<any>(null);
   const [username, setUsername] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  
-  // Safe area insets
-  const insets = useSafeAreaInsets();
 
-  const [username, setUsername] = useState('');
-  const [loading, setLoading] = useState(true);
+  console.log("hereherere");
+  const { userId } = useLocalSearchParams();  // Get userId from URL
+  console.log(userId, );
 
+  // Listen for authentication state changes
   useEffect(() => {
+    // Firebase initialization inside useEffect
+    // const app = initializeApp(firebaseConfig);
+    // const auth = getAuth(app);
+
+    console.log('auth object!!!!!!:', auth);  // Debugging log
+    
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setUser(user);  // User is logged in
+        setUser(user);
+        console.log('setUser user what is user', user);
       } else {
-        router.replace("/login"); // Redirect to login if not authenticated
+        router.replace("/(tabs)/login");
       }
     });
 
     return () => unsubscribe();
   }, []);
 
+  // Fetch user data after authentication
   useEffect(() => {
     if (!user) return;
 
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`http://your-backend-url.com/api/user/${user.uid}`);
+        const response = await fetch(`http://10.136.1.40:5000/api/user/${data.user.uid}`);
         const data = await response.json();
 
         if (response.ok) {
@@ -60,14 +67,9 @@ export default function ProfileScreen() {
     fetchUserData();
   }, [user]);
 
-  // action for logout
-  const handleLogut = () => {
-    router.push('/(tabs)/login'); 
+  const handleLogout = () => {
+    router.push('/(tabs)/login');
   };
-
-  if (loading) {
-    return <ThemedText>Loading...</ThemedText>; // Show loading state while fetching data
-  }
 
   return (
     <ImageBackground
@@ -78,21 +80,20 @@ export default function ProfileScreen() {
       <SafeAreaView style={styles.background}>
         <ButtonComponent
           title="LOGOUT"
-          onPress={handleLogut}
+          onPress={handleLogout}
           style={{
-            padding: 7, 
-            width: 100, 
+            padding: 7,
+            width: 100,
             marginBottom: 0,
             marginTop: 60,
             bottom: 50,
             left: 140
           }}
-          textStyle={{ fontSize: 13}}
+          textStyle={{ fontSize: 13 }}
         />
 
         <ThemedView style={styles.titleContainer}>
-          {/* Dynamically displaying the fetched username */}
-          <ThemedText type="title">{username || "Loading..."}</ThemedText> 
+          <ThemedText type="title">{username}</ThemedText>
         </ThemedView>
       </SafeAreaView>
     </ImageBackground>
@@ -113,7 +114,7 @@ const styles = StyleSheet.create({
   },
   backgroundImage: {
     position: 'absolute',
-    width: '100%', 
+    width: '100%',
     height: '100%',
     flex: 1,
   },

@@ -30,8 +30,7 @@ export default function Camera() {
     // Camera permissions are still loading.
     return <View />;
   }
-  // delete this later
-  console.log("API Key:", process.env.GOOGLE_VISION_API_KEY);
+  
 
   if (!permission.granted) {
     // Camera permissions are not granted yet.

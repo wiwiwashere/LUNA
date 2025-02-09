@@ -25,19 +25,6 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState<boolean>(true);
   // const { user } = useAuth();
 
-  // pull user
-  // useEffect(() => {
-  //   const auth = getAuth(); // Get the auth instance
-  
-  //   const user = auth.currentUser; // Get the current signed-in user
-  
-  //   if (user) {
-  //     console.log("User is signed in:", user.email); // Access user details like email, uid, etc.
-  //   } else {
-  //     console.log("No user is signed in.");
-  //   }
-  // }, []);
-
   // insets
   const insets = useSafeAreaInsets();
 

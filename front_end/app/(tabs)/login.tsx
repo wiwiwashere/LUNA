@@ -20,6 +20,7 @@ export default function LogInScreen() {
     setLoading(true);
 
     try {
+
       const response = await fetch('http://10.136.1.40:5000/api/auth/login', {
         method: 'POST',
         headers: {
@@ -31,11 +32,24 @@ export default function LogInScreen() {
         }),
       });
 
-      const data = await response.json();
+      const data = await response.json(); // Parse response body as JSON
+      console.log('Response body (JSON):', data); // Log the parsed data
 
       if (response.ok) {
         setLoading(false);
-        router.push('/(tabs)/camera'); 
+        //router.push("/(tabs)/profile/${data.user.uid}"); ///
+        router.push({
+          pathname: "/(tabs)/profile/",
+          params: {
+            token: data.user.uid
+          }
+       })
+        // router.push({ pathname: '/(tabs)/profile/${data.user.uid}', params: data.user.uid }); // Remove the braces in params
+
+        console.log('before'); 
+        console.log('User is signed in:', data.user.uid);
+        console.log('push to profile'); 
+        // router.push('/(tabs)/explore'); 
       } else {
         setLoading(false);
         Alert.alert("Login Failed", data.error || "An error occurred");
@@ -129,5 +143,5 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     height: '100%',
-  },
-});
+  }
+})

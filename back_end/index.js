@@ -3,18 +3,30 @@ const imageRoutes = require('./routes/imageRoutes');
 const authRoutes = require("./controllers/auth");
 const dotenv = require('dotenv');
 const cors = require('cors');
-const { createProxyMiddleware } = require('http-proxy-middleware');
 const { initializeApp } = require('firebase/app');
 const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } = require('firebase/auth');
 const { getFirestore, doc, setDoc, getDoc } = require('firebase/firestore');
 const { auth, db } = require('./services/firebase');
+const { generateFeedback } = require('./services/openai'); 
 const http = require('http')
+
 
 dotenv.config();
 
 const app = express();
 const port = 5000;  // Make sure this is 5000
-const app = initializeApp(firebaseConfig);
+// idk bruh
+const firebaseConfig = {
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.FIREBASE_APP_ID,
+  measurementId: process.env.FIREBASE_MEASUREMENT_ID,
+};
+
+initializeApp(firebaseConfig);
 
 
 // Middleware
@@ -27,7 +39,7 @@ app.use(cors({
 
 app.use(express.json()); // Middleware to parse JSON bodies
 
-const allowedOrigins = ['http://localhost:8081']; // <--- IMPORTANT: Add your React app's origin here!
+const allowedOrigins = ['http://localhost:8081']; 
 
 const corsOptions = {
   origin: function (origin, callback) {
@@ -137,6 +149,17 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
+app.post('/analyze', async (req, res) => {
+  try {
+    const { ingredients, preferences } = req.body;
+    const analysis = await generateFeedback(ingredients, preferences);
+    res.json(analysis);
+  } catch (error) {
+    console.error('Analysis error:', error);
+    res.status(500).json({ error: 'Failed to analyze ingredients' });
+  }
+});
+
 app.listen(port, '0.0.0.0', () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
@@ -183,6 +206,3 @@ server.listen(5000, () => {
       console.log(`Detected text: ${text}`);
     }
   });
-  
-  
-  
