@@ -1,10 +1,15 @@
 {
   "expo": {
+    "splash": {
+      "backgroundColor": "#000000",
+      "image": "./assets/images/splash-background.png",
+      "resizeMode": "contain"
+    },
     "name": "front-end",
     "slug": "front-end",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/luna_logo.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -30,17 +35,16 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/luna_logo.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/splash-background.png",
           "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#3E5368"
+          "resizeMode": "contain"
         }
       ],
       "expo-font"
