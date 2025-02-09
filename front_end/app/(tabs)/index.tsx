@@ -44,7 +44,7 @@ export default function HomeScreen() {
   const handleCameraPress = () => {
     // navigation.navigate('./(tabs)/camera');
     // setIsCameraVisible(prevState => !prevState); 
-    router.push('/(tabs)/camera'); 
+    router.push('/camera'); 
   };
 
   // action for upload button

@@ -3,7 +3,10 @@ import { AntDesign } from '@expo/vector-icons';
 import { CameraType, CameraView, useCameraPermissions } from 'expo-camera';
 import React from 'react';
 import { useRef, useState } from 'react';
-import { Alert, Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Button, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
+import { useRouter } from "expo-router"
+import { OPENAI_API_KEY } from '@/config';
+import { IMGUR_CLIENT_ID } from '@/config';
 import axios from 'axios';
 
 interface ButtonProps {
@@ -24,6 +27,7 @@ export default function Camera() {
   const [permission, requestPermission] = useCameraPermissions();
   const [photo, setPhoto] = useState<any>(null);
   const cameraRef = useRef<CameraView | null>(null);
+  const router = useRouter();
 
   if (!permission) {
     // Camera permissions are still loading.
@@ -54,13 +58,13 @@ export default function Camera() {
       const takenPhoto = await cameraRef.current.takePictureAsync(options);
 
         if (takenPhoto) {
-          setPhoto(takenPhoto);
+          setPhoto(takenPhoto.uri);
 
         const photoData = new FormData();
             photoData.append("image", {
                 uri: takenPhoto.uri, 
                 type: "image/jpeg", 
-                name: "photo.jpg"} as unknown as Blob);
+                name: "photo.jpg"} as any);
 
                 uploadPhoto(photoData);
               } else {
@@ -87,8 +91,8 @@ export default function Camera() {
       const data = await response.data;
   
       if (data.success) {
-        //await sendToFirebase(data.data.link);
-        await sendToFirebase(data.data.link);
+        const imageUrl = data.data.link;
+        await handleSendToOpenAI();
         Alert.alert("Success!", `Image uploaded to Imgur: ${data.data.link}`);
         console.log(`${data.data.link}`);
       } else {
@@ -100,24 +104,55 @@ export default function Camera() {
     }
   }
 
-  async function sendToFirebase(imageLink: string): Promise <void>{
+  // async function sendToFirebase(imageLink: string): Promise <void>{
+  //   try {
+  //     const backendUrl = "https://us-central1-luna-d4ef6.cloudfunctions.net/storeImageLink";
+  
+  //     const response = await axios.post(backendUrl, {
+  //       imageLink,
+  //     });
+  
+  //     console.log("Firebase response:", response.data);
+  //   } catch (error) {
+  //     console.error("Error sending image link to Firebase:", error);
+  //     Alert.alert("Error", "Failed to save image link to Firebase.");
+  //   }
+  // }
+
+  const handleSendToOpenAI = async () => {
+    if (!photo) return Alert.alert("Error", "No photo taken.");
+
+    const formData = new FormData();
+    formData.append("file", {
+      uri: photo,
+      type: "image/jpeg",
+      name: "photo.jpg",
+    } as any);
+
+    formData.append("model", "gpt-4-vision-preview");
+
     try {
-      const backendUrl = "https://us-central1-luna-d4ef6.cloudfunctions.net/storeImageLink";
-  
-      const response = await axios.post(backendUrl, {
-        imageLink,
+      const response = await fetch("https://api.openai.com/v1/images/generations", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+          "Content-Type": "multipart/form-data",
+        },
+        body: formData,
       });
-  
-      console.log("Firebase response:", response.data);
+
+      const data = await response.json();
+      console.log("✅ OpenAI Response:", data);
+
+      if (data) {
+        router.push({ pathname: "/results", params: { result: JSON.stringify(data) } });
+
+      }
     } catch (error) {
-      console.error("Error sending image link to Firebase:", error);
-      Alert.alert("Error", "Failed to save image link to Firebase.");
+      console.error("❌ OpenAI API Error:", error);
+      Alert.alert("Error", "Failed to send image to OpenAI.");
     }
-  }
-
-  const handleRetakePhoto = () => setPhoto(null);
-
-  if (photo) return <PhotoPreviewSection photo={photo} handleRetakePhoto={handleRetakePhoto} />;
+  };
 
   return (
     <View style={styles.container}>
@@ -162,4 +197,8 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     padding: 15,
   },
+  previewImage: { 
+    width: "90%", 
+    height: 300, 
+    marginBottom: 20 },
 });
