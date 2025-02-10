@@ -2,6 +2,7 @@ import PhotoPreviewSection from '@/components/PhotoPreviewSection';
 import { AntDesign } from '@expo/vector-icons';
 import { CameraType, CameraView, useCameraPermissions } from 'expo-camera';
 import React from 'react';
+import { useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
 import { Alert, Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import axios from 'axios';
@@ -17,10 +18,11 @@ const ButtonComponent: React.FC<ButtonProps> = ({ onPress, title }) => {
     <TouchableOpacity onPress={onPress} style={{ padding: 10, backgroundColor: '#4CAF50', borderRadius: 5 }}>
       <Text style={{ color: 'white', textAlign: 'center' }}>{title}</Text>
     </TouchableOpacity>
-  );
+  ); 
 };
 
 export default function Camera() {
+  const router = useRouter();
   const [facing, setFacing] = useState<CameraType>('back');
   const [permission, requestPermission] = useCameraPermissions();
   const [photo, setPhoto] = useState<any>(null);
@@ -107,75 +109,111 @@ export default function Camera() {
 
   async function detectTextFromImage(imageLink: string): Promise<void> {
     try {
-      console.log("Google Vision API Key: AIzaSyDFXACzuiodXtuRhmQg_Ioc0-w-CaPwENI");
+      console.log("Starting text detection for image:", imageLink);
       const visionApiUrl = "https://vision.googleapis.com/v1/images:annotate?key=AIzaSyDFXACzuiodXtuRhmQg_Ioc0-w-CaPwENI";
+      
       const requestBody = {
-        requests: [
-          {
-            image: {
-              source: {
-                imageUri: imageLink, 
-              },
+        requests: [{
+          image: {
+            source: {
+              imageUri: imageLink, 
             },
-            features: [
-              {
-                type: "TEXT_DETECTION",
-                maxResults: 1,
-              },
-            ],
           },
-        ],
+          features: [{
+            type: "TEXT_DETECTION",
+            maxResults: 1,
+          }],
+        }],
       };
   
-      // Make the request to Google Vision API
+      console.log("Sending request to Vision API...");
       const response = await axios.post(visionApiUrl, requestBody);
-      console.log('Google Vision API Response:', response.data); // Log full response
-
+      console.log('Full Vision API Response:', response.data);
+  
+      if (!response.data.responses || !response.data.responses[0]) {
+        console.error("Invalid response structure:", response.data);
+        throw new Error("Invalid API response structure");
+      }
   
       const textAnnotations = response.data.responses[0].textAnnotations;
+      console.log("Text annotations:", textAnnotations);
   
       if (textAnnotations && textAnnotations.length > 0) {
         const detectedText = textAnnotations[0].description;
-        Alert.alert("Text Detected", detectedText);
-        console.log("Detected Text: ", detectedText); // Log the detected text
-        ingredients = extractIngredients(detectedText);
-        console.log(ingredients);
+        console.log("Raw detected text:", detectedText);
+        
+        // Extract ingredients
+        const ingredients = extractIngredients(detectedText);
+        console.log("Extracted ingredients:", ingredients);
+  
+        if (ingredients.length === 0) {
+          Alert.alert("No Ingredients Found", "Could not find an ingredients list in the image.");
+          return;
+        }
+  
+        // Navigate to results
+        console.log("Navigating to results with ingredients:", ingredients);
         router.push({
           pathname: "/(tabs)/results/",
           params: {
-            ingredients: ingredients
+            ingredients: JSON.stringify(ingredients),  // Directly pass the ingredients array
           }
-        })
+        });
       } else {
+        console.error("No text annotations found");
         Alert.alert("No Text Detected", "No text found in the image.");
       }
     } catch (error) {
-      console.error("Error in text detection:", error);
-  
+      console.error("Full error object:", error);
       if (error instanceof AxiosError) {
-        // Log the full error response if available
-        if (error.response) {
-          console.error("Error response:", error.response.data);
-        } else {
-          console.error("No response from server:", error.message);
-        }
-      } else {
-        console.error("An unexpected error occurred:", error);
+        console.error("API Error details:", {
+          status: error.response?.status,
+          data: error.response?.data,
+          message: error.message
+        });
       }
-  
       Alert.alert("Text Detection Error", "Failed to detect text from the image.");
     }
   }
   function extractIngredients(text: string): string[] {
-    const match = text.match(/INGREDIENTS: (.*?\.)/i); // Capture from "ingredients" to the first period
-    if (!match) return []; // Return empty array if no match
-
-    return match[1] // Extract matched text
-        .replace(/\./, '') // Remove the final period
-        .split(/\s*,\s*/) // Split by commas, trimming spaces
-        .map(item => item.trim()) // Trim each ingredient
-        .filter(item => item.length > 0); // Remove empty items
-}
+    console.log("Starting ingredient extraction from text:", text);
+    
+    // Try different patterns to find ingredients
+    const patterns = [
+      /INGREDIENTS?:?\s*([\s\S]+?)(?:\.|$)/i,  // Standard format
+      /CONTAINS?:?\s*([\s\S]+?)(?:\.|$)/i,     // Alternative format
+      /MADE WITH:?\s*([\s\S]+?)(?:\.|$)/i      // Another alternative
+    ];
+    
+    let match = null;
+    for (const pattern of patterns) {
+      match = text.match(pattern);
+      if (match) break;
+    }
+    
+    if (!match) {
+      console.log("No ingredients section found with any pattern");
+      return [];
+    }
+    
+    const ingredientText = match[1];
+    console.log("Found ingredient text:", ingredientText);
+    
+    // Split by multiple possible delimiters
+    const ingredients = ingredientText
+      .replace(/\n/g, ' ')          // Replace newlines with spaces
+      .replace(/\([^)]*\)/g, '')    // Remove parenthetical contents
+      .split(/[,.]/)                // Split by comma or period
+      .map(item => item.trim())
+      .filter(item => 
+        item.length > 0 && 
+        !item.toLowerCase().includes('contains') && 
+        !item.toLowerCase().includes('may contain')
+      );
+    
+    console.log("Final processed ingredients:", ingredients);
+    return ingredients;
+  }
   
 
   const handleRetakePhoto = () => setPhoto(null);

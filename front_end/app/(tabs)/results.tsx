@@ -1,109 +1,78 @@
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ImageBackground, SafeAreaView } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect } from "react";
-import ButtonComponent from '@/components/Button';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { generateFeedback } from './openai'
+import { generateFeedback } from '../../utils/gemini'; 
+import ButtonComponent from "@/components/Button";
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
 
 export default function ResultsScreen() {
-  // const { result } = useLocalSearchParams();
   const router = useRouter();
-
-  const { ingredients } = useLocalSearchParams();  // Get userId from URL
+  const { ingredients } = useLocalSearchParams();
+  const [analysis, setAnalysis] = useState(""); // State to store AI response
+  const [loading, setLoading] = useState(true); // State for loading indicator
+  const [parsedIngredients, setParsedIngredients] = useState([]); // State for parsed ingredients
 
   useEffect(() => {
-    console.log("ingredients: ", ingredients);
-    if (ingredients) {
+    const fetchAnalysis = async () => {
+      if (!ingredients) return;
+
       try {
-        const parsed = JSON.parse(ingredients as string);
-        console.log("Parsed result:", parsed);
-      } catch (e) {
-        console.error("Parsing error:", e);
-      }
-    }
-  }, [ingredients]);
+        // Ensure ingredients are parsed correctly
+        const parsed = Array.isArray(ingredients) ? ingredients : JSON.parse(ingredients);
+        console.log("Parsed ingredients:", parsed);
 
-  let parsedResult = null;
-  try {
-    parsedResult = ingredients ? JSON.parse(ingredients as string) : null;
-  } catch (e) {
-    console.error("Error parsing result:", e);
-  }
+        // Set parsed ingredients to state
+        setParsedIngredients(parsed);
 
-  const renderAnalysis = () => {
-    if (!parsedResult) {
-      console.log("No parsed result available");
-      return null;
-    }
+        if (parsed.length === 0) {
+          setAnalysis("No ingredients found in the image.");
+          setLoading(false);
+          return;
+        }
 
-    console.log("Rendering analysis with:", parsedResult);
+        setLoading(true);
+        const feedback = await generateFeedback(parsed);
+        console.log("AI Response:", feedback);
 
-    // send the ingredients
-    const sendIngredientsToOpenAI = async (ingredients: string[]) => {
-      try {
-        const response = await axios.post('https://api.openai.com/v1/completions', {
-          model: 'text-davinci-003', // Or whichever model you want to use
-          prompt: `Given the following ingredients, analyze them: ${ingredients.join(', ')}`,
-          max_tokens: 150,
-        }, {
-          headers: {
-            'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-            'Content-Type': 'application/json',
-          },
-        });
-  
-        console.log('OpenAI response:', response.data);
+        setAnalysis(feedback);
       } catch (error) {
-        console.error('Error sending ingredients to OpenAI:', error);
+        console.error("Error fetching analysis:", error);
+        setAnalysis("An error occurred while fetching the analysis.");
+      } finally {
+        setLoading(false);
       }
     };
 
-    return (
-      <ThemedView style={styles.analysisContainer}>
-        <ThemedText style={styles.sectionTitle}>Ingredients Found:</ThemedText>
-        {Array.isArray(parsedResult.ingredients) ? (
-          parsedResult.ingredients.map((ingredient: string, index: number) => (
-            <ThemedText key={index} style={styles.ingredient}>• {ingredient}</ThemedText>
-          ))
-        ) : (
-          <ThemedText style={styles.errorText}>No ingredients data available</ThemedText>
-        )}
-
-        <ThemedText style={styles.sectionTitle}>Analysis:</ThemedText>
-        <ThemedText style={styles.analysisText}>
-          {parsedResult.analysis || "No analysis available"}
-        </ThemedText>
-      </ThemedView>
-    );
-  };
+    fetchAnalysis();
+  }, [ingredients]);
 
   return (
-    <ImageBackground
-      source={require('@/assets/images/background.jpg')}
-      style={styles.backgroundImage}
-      resizeMode="cover"
-    >
+    <ImageBackground source={require('@/assets/images/background.jpg')} style={styles.backgroundImage} resizeMode="cover">
       <SafeAreaView style={styles.background}>
         <ScrollView contentContainerStyle={styles.container}>
           <ThemedView style={styles.contentContainer}>
             <ThemedText style={styles.title} type="title">Results</ThemedText>
-            
-            {parsedResult ? (
-              renderAnalysis()
-            ) : (
-              <View>
-                <ThemedText style={styles.errorText}>No result found.</ThemedText>
-                <ThemedText style={styles.debugText}>Raw data: {ingredients}</ThemedText>
-              </View>
-            )}
 
-            <ButtonComponent 
-              onPress={() => router.push("/")} 
-              title="Scan Another Item" 
-              style={styles.button}
-              textStyle={styles.buttonText}
-            />
+            <ThemedView style={styles.analysisContainer}>
+              <ThemedText style={styles.sectionTitle}>Ingredients Found:</ThemedText>
+              {parsedIngredients.length > 0 ? (
+                parsedIngredients.map((ingredient, index) => (
+                  <ThemedText key={index} style={styles.ingredient}>• {ingredient}</ThemedText>
+                ))
+              ) : (
+                <ThemedText style={styles.errorText}>No ingredients found.</ThemedText>
+              )}
+
+              <ThemedText style={styles.sectionTitle}>Analysis:</ThemedText>
+              {loading ? (
+                <ThemedText style={styles.analysisText}>Analyzing ingredients...</ThemedText>
+              ) : (
+                <ThemedText style={styles.analysisText}>{analysis || "No analysis available"}</ThemedText>
+              )}
+            </ThemedView>
+
+            <ButtonComponent onPress={() => router.push("/")} title="Scan Another Item" style={styles.button} textStyle={styles.buttonText} />
           </ThemedView>
         </ScrollView>
       </SafeAreaView>

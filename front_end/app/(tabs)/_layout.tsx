@@ -40,6 +40,12 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="splash"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
         name="camera"
         options={{
           href: null, // Hides it from the tab bar
