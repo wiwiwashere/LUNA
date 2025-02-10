@@ -165,6 +165,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 0,
   },
+  buttonContainer: {
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    marginTop: 50
+  },
   backgroundImage: {
     position: 'absolute',
     width: '100%',
