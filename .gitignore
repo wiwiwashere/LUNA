@@ -9,6 +9,8 @@ front_end/node_modules/
 *.env
 **/.env
 back_end/.env
+front_end/.env 
+back_end/services/openai.js
 
 # Firebase credentials (if needed, e.g., private keys or other sensitive files)
 luna-450303-9301cac1fcf1.json
